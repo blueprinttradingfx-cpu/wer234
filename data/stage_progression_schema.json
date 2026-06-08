@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MechaDefenseProgressionMatrix",
+  "description": "Configuration schema for the strategic idle progression engine with cycle-based scaling.",
+  "type": "object",
+  "required": [
+    "global_settings",
+    "cycles"
+  ],
+  "properties": {
+    "global_settings": {
+      "type": "object",
+      "required": [
+        "total_stage_time_budget_seconds",
+        "loss_heart_threshold"
+      ],
+      "properties": {
+        "total_stage_time_budget_seconds": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 300.0
+        },
+        "loss_heart_threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50
+        }
+      }
+    },
+    "cycles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "cycle_id",
+          "stage_range",
+          "enemy_base_hp_multiplier",
+          "stages"
+        ],
+        "properties": {
+          "cycle_id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "stage_range": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "enemy_base_hp_multiplier": {
+            "type": "number",
+            "minimum": 0.0
+          },
+          "stages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "stage_id",
+                "stage_name",
+                "archetype",
+                "boss_hp",
+                "enemies_per_wave",
+                "velocity_modifier",
+                "data_skip_multiplier"
+              ],
+              "properties": {
+                "stage_id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "stage_name": {
+                  "type": "string"
+                },
+                "archetype": {
+                  "type": "string",
+                  "enum": [
+                    "The Entry Stream",
+                    "The Rush Protocol",
+                    "Shielded Packets",
+                    "Splitting Malware",
+                    "The EMP Jammer",
+                    "Re-routing Logic",
+                    "Regenerative Stream",
+                    "Swarm Carrier",
+                    "The Phantom Grid",
+                    "The Final Meltdown"
+                  ]
+                },
+                "boss_hp": {
+                  "type": "number",
+                  "minimum": 1.0
+                },
+                "enemies_per_wave": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "velocity_modifier": {
+                  "type": "number",
+                  "minimum": 0.0
+                },
+                "data_skip_multiplier": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

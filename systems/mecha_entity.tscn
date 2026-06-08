@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://h4i5j6k7l8na"]
+
+[ext_resource type="Script" path="res://systems/mecha_entity.gd" id="1_mecha"]
+
+[node name="MechaEntity" type="Node2D"]
+script = ExtResource("1_mecha")
+
+[node name="CoreSprite" type="Sprite2D" parent="."]
+modulate = Color(0.2, 0.6, 1, 1)
+
+[node name="Shield1" type="Sprite2D" parent="."]
+position = Vector2(-40, 0)
+modulate = Color(0.3, 0.3, 0.3, 0.5)
+
+[node name="Shield2" type="Sprite2D" parent="."]
+position = Vector2(40, 0)
+modulate = Color(0.3, 0.3, 0.3, 0.5)
+
+[node name="Shield3" type="Sprite2D" parent="."]
+position = Vector2(0, -40)
+modulate = Color(0.3, 0.3, 0.3, 0.5)

@@ -1,0 +1,193 @@
+[gd_scene load_steps=2 format=3 uid="uid://ewj8vpqidlni"]
+
+[ext_resource type="Script" uid="uid://d1cqej5p2ic87" path="res://scenes/screens/main_gundam/main_gundam_scene.gd" id="1_tppnm"]
+
+[node name="MainGameScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tppnm")
+
+[node name="ArenaContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="Viewport" type="SubViewport" parent="ArenaContainer"]
+handle_input_locally = false
+size = Vector2i(1080, 1920)
+render_target_update_mode = 4
+
+[node name="GameplayArena" type="Node2D" parent="ArenaContainer/Viewport"]
+unique_name_in_owner = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UIControl" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Header" type="PanelContainer" parent="CanvasLayer/UIControl"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIControl/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+
+[node name="HeaderLayout" type="HBoxContainer" parent="CanvasLayer/UIControl/Header/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="StageLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+layout_mode = 2
+text = "STAGE 11"
+
+[node name="WaveLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "[WAVE 11/100]"
+horizontal_alignment = 1
+
+[node name="AliveCounterLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "☠️ Alive: 0/50"
+horizontal_alignment = 2
+
+[node name="ClockLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "⏱️ 04:52"
+
+[node name="SettingsButton" type="Button" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " ⚙ "
+
+[node name="MidRunStatus" type="VBoxContainer" parent="CanvasLayer/UIControl"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -380.0
+offset_bottom = -160.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 2
+
+[node name="BatteryProgress" type="ProgressBar" parent="CanvasLayer/UIControl/MidRunStatus"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+value = 100.0
+
+[node name="SoftwarePowerUps" type="HBoxContainer" parent="CanvasLayer/UIControl/MidRunStatus"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="AtkSpdBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 90)
+layout_mode = 2
+text = "⚡ AtkSpd"
+
+[node name="PierceBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 90)
+layout_mode = 2
+text = "🎯 Pierce"
+
+[node name="CooldownBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 90)
+layout_mode = 2
+text = "🔋 CD"
+
+[node name="MoveSpdBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 90)
+layout_mode = 2
+text = "💨 Speed"
+
+[node name="MatrixBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 90)
+layout_mode = 2
+text = "🧬 Matrix"
+
+[node name="OverclockBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 90)
+layout_mode = 2
+text = "🔥 OVERCLOCK"
+
+[node name="Footer" type="PanelContainer" parent="CanvasLayer/UIControl"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -140.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIControl/Footer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="FooterLayout" type="HBoxContainer" parent="CanvasLayer/UIControl/Footer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="ShopButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🛒 Shop"
+
+[node name="HangarButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "⚙️ Hangar"
+
+[node name="UpgradesButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🔧 Upgrades"
+
+[node name="BattlePassButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🎫 Pass"
+
+[node name="LeaderboardButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🏆 Rank"

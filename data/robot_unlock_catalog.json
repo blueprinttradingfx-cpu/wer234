@@ -1,0 +1,25 @@
+{
+  "mechas": [
+    {
+      "mecha_id": "mecha_unit_alpha_base",
+      "name": "Unit Alpha (Baseline)",
+      "unlock_requirement": { "type": "stage_reached", "value": 1 },
+      "base_stats": { "attack_damage": 10.0, "attack_speed": 2.5 },
+      "skill": { "name": "Homing Missiles", "total_damage": 50.0, "cooldown": 10.0 }
+    },
+    {
+      "mecha_id": "mecha_unit_beta_gatling",
+      "name": "Unit Beta (Gatling Core)",
+      "unlock_requirement": { "type": "stage_failed_or_reached", "value": 11 },
+      "base_stats": { "attack_damage": 20.0, "attack_speed": 2.0 },
+      "skill": { "name": "Plasma Flurry", "total_damage": 100.0, "cooldown": 8.0 }
+    },
+    {
+      "mecha_id": "mecha_unit_gamma_laser",
+      "name": "Unit Gamma (Laser Core)",
+      "unlock_requirement": { "type": "stage_failed_or_reached", "value": 21 },
+      "base_stats": { "attack_damage": 40.0, "attack_speed": 1.5 },
+      "skill": { "name": "Mega Particle Beam", "total_damage": 250.0, "cooldown": 7.5 }
+    }
+  ]
+}

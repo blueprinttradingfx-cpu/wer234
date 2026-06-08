@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b6jgv2lcuyiy1"]
+
+[ext_resource type="Script" path="res://tests/test_critical_epics.gd" id="1_0"]
+
+[node name="TestCriticalEpics" type="Node"]
+script = ExtResource("1_0")

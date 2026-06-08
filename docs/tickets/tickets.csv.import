@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://3jgf44sirrf5"
+
+[deps]
+
+files=["res://docs/tickets/tickets.Title.translation", "res://docs/tickets/tickets.Priority.translation", "res://docs/tickets/tickets.Description.translation"]
+
+source_file="res://docs/tickets/tickets.csv"
+dest_files=["res://docs/tickets/tickets.Title.translation", "res://docs/tickets/tickets.Priority.translation", "res://docs/tickets/tickets.Description.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

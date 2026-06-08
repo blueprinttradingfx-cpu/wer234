@@ -1,0 +1,155 @@
+{
+  "global_settings": {
+    "total_stage_time_budget_seconds": 300.0,
+    "loss_heart_threshold": 50
+  },
+  "cycles": [
+    {
+      "cycle_id": 1,
+      "stage_range": [1, 10],
+      "enemy_base_hp_multiplier": 1.0,
+      "stages": [
+        { 
+          "stage_id": 1, 
+          "stage_name": "Database Sector 0-Alpha", 
+          "archetype": "The Entry Stream", 
+          "boss_hp": 290.0, 
+          "enemies_per_wave": 10, 
+          "velocity_modifier": 1.0, 
+          "data_skip_multiplier": 1 
+        },
+        { 
+          "stage_id": 2, 
+          "stage_name": "Database Sector 0-Beta", 
+          "archetype": "The Rush Protocol", 
+          "boss_hp": 390.0, 
+          "enemies_per_wave": 14, 
+          "velocity_modifier": 1.35, 
+          "data_skip_multiplier": 2 
+        },
+        { 
+          "stage_id": 3, 
+          "stage_name": "Database Sector 0-Gamma", 
+          "archetype": "Shielded Packets", 
+          "boss_hp": 550.0, 
+          "enemies_per_wave": 16, 
+          "velocity_modifier": 1.0, 
+          "data_skip_multiplier": 2 
+        },
+        { 
+          "stage_id": 4, 
+          "stage_name": "Database Sector 0-Delta", 
+          "archetype": "Splitting Malware", 
+          "boss_hp": 700.0, 
+          "enemies_per_wave": 12, 
+          "velocity_modifier": 1.0, 
+          "data_skip_multiplier": 3 
+        },
+        { 
+          "stage_id": 5, 
+          "stage_name": "Database Sector 0-Epsilon", 
+          "archetype": "The EMP Jammer", 
+          "boss_hp": 950.0, 
+          "enemies_per_wave": 18, 
+          "velocity_modifier": 1.5, 
+          "data_skip_multiplier": 3 
+        },
+        { 
+          "stage_id": 6, 
+          "stage_name": "Database Sector 0-Zeta", 
+          "archetype": "Re-routing Logic", 
+          "boss_hp": 1200.0, 
+          "enemies_per_wave": 20, 
+          "velocity_modifier": 1.6, 
+          "data_skip_multiplier": 4 
+        },
+        { 
+          "stage_id": 7, 
+          "stage_name": "Database Sector 0-Eta", 
+          "archetype": "Regenerative Stream", 
+          "boss_hp": 1600.0, 
+          "enemies_per_wave": 22, 
+          "velocity_modifier": 1.0, 
+          "data_skip_multiplier": 4 
+        },
+        { 
+          "stage_id": 8, 
+          "stage_name": "Database Sector 0-Theta", 
+          "archetype": "Swarm Carrier", 
+          "boss_hp": 2200.0, 
+          "enemies_per_wave": 5, 
+          "velocity_modifier": 1.0, 
+          "data_skip_multiplier": 5 
+        },
+        { 
+          "stage_id": 9, 
+          "stage_name": "Database Sector 0-Iota", 
+          "archetype": "The Phantom Grid", 
+          "boss_hp": 3000.0, 
+          "enemies_per_wave": 25, 
+          "velocity_modifier": 1.75, 
+          "data_skip_multiplier": 5 
+        },
+        { 
+          "stage_id": 10, 
+          "stage_name": "Database Sector 9-Alpha", 
+          "archetype": "The Final Meltdown", 
+          "boss_hp": 4500.0, 
+          "enemies_per_wave": 30, 
+          "velocity_modifier": 2.0, 
+          "data_skip_multiplier": 6 
+        }
+      ]
+    },
+    {
+      "cycle_id": 2,
+      "stage_range": [11, 20],
+      "enemy_base_hp_multiplier": 2.0,
+      "stages": [
+        { 
+          "stage_id": 11, 
+          "stage_name": "Database Sector 1-Alpha", 
+          "archetype": "The Rush Protocol", 
+          "boss_hp": 1200.0, 
+          "enemies_per_wave": 14, 
+          "velocity_modifier": 1.20, 
+          "data_skip_multiplier": 2 
+        },
+        { 
+          "stage_id": 20, 
+          "stage_name": "Database Sector 9-Beta", 
+          "archetype": "The Final Meltdown", 
+          "boss_hp": 8000.0, 
+          "enemies_per_wave": 34, 
+          "velocity_modifier": 2.20, 
+          "data_skip_multiplier": 6 
+        }
+      ]
+    },
+    {
+      "cycle_id": 3,
+      "stage_range": [21, 30],
+      "enemy_base_hp_multiplier": 4.0,
+      "stages": [
+        { 
+          "stage_id": 21, 
+          "stage_name": "Database Sector 2-Alpha", 
+          "archetype": "Shielded Packets", 
+          "boss_hp": 3000.0, 
+          "enemies_per_wave": 16, 
+          "velocity_modifier": 1.40, 
+          "data_skip_multiplier": 2 
+        },
+        { 
+          "stage_id": 30, 
+          "stage_name": "Database Sector 9-Gamma", 
+          "archetype": "The Final Meltdown", 
+          "boss_hp": 15000.0, 
+          "enemies_per_wave": 38, 
+          "velocity_modifier": 2.40, 
+          "data_skip_multiplier": 6 
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://j8lal0m1n2o3"]
+
+[ext_resource type="Script" path="res://scenes/screens/main_menu.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://ewj8vpqidlni" path="res://scenes/common/top_app_bar.tscn" id="2_top"]
+[ext_resource type="PackedScene" uid="uid://c2d3e4f5g6h7" path="res://scenes/common/bottom_nav.tscn" id="3_bottom"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="RootLayout" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="Control" parent="RootLayout"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopAppBar" parent="RootLayout/SafeArea" instance=ExtResource("2_top")]
+
+[node name="MainContent" type="Control" parent="RootLayout/SafeArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 60.0
+offset_right = 0.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RootLayout/SafeArea/MainContent"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+text = "MECHA DEFENSE"
+horizontal_alignment = 1
+
+[node name="StageLabel" type="Label" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+text = "Stage 1 — Launch Sector"
+horizontal_alignment = 1
+custom_minimum_size = Vector2(0, 40)
+
+[node name="Spacer1" type="Control" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+
+[node name="StartButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 80)
+text = "⚔️ START BATTLE"
+
+[node name="Spacer2" type="Control" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="HangarButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 80)
+text = "⚙️ HANGAR"
+
+[node name="Spacer3" type="Control" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="UpgradesButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 80)
+text = "🔧 UPGRADES"
+
+[node name="Spacer4" type="Control" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="ShopButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(400, 80)
+text = "🛒 SHOP"
+
+[node name="BottomNav" parent="RootLayout/SafeArea" instance=ExtResource("3_bottom")]

@@ -1,0 +1,109 @@
+{
+	"rarity_weights": {
+		"common": 60,
+		"rare": 30,
+		"legendary": 10
+	},
+	"cards": [
+		{
+			"id": "attack_speed",
+			"type": "attack_speed",
+			"title": "⚡ Attack Speed",
+			"description": "+12% Attack Speed",
+			"value": 0.12,
+			"rarity": "common",
+			"min_stage": 1,
+			"weight": 1
+		},
+		{
+			"id": "damage_boost",
+			"type": "damage_boost",
+			"title": "💥 Damage Boost",
+			"description": "+10% Damage",
+			"value": 0.10,
+			"rarity": "common",
+			"min_stage": 1,
+			"weight": 1
+		},
+		{
+			"id": "bullet_velocity",
+			"type": "bullet_velocity",
+			"title": "💨 Bullet Velocity",
+			"description": "+10% Bullet Velocity",
+			"value": 0.10,
+			"rarity": "common",
+			"min_stage": 1,
+			"weight": 1
+		},
+		{
+			"id": "shield_boost",
+			"type": "shield_boost",
+			"title": "🛡️ Shield Boost",
+			"description": "+1 Shield",
+			"value": 1.0,
+			"rarity": "common",
+			"min_stage": 1,
+			"weight": 1
+		},
+		{
+			"id": "missile_cooldown",
+			"type": "missile_cooldown",
+			"title": "🔋 Missile Cooldown",
+			"description": "-0.5s Missile Cooldown",
+			"value": -0.5,
+			"rarity": "common",
+			"min_stage": 1,
+			"weight": 1
+		},
+		{
+			"id": "multi_shot",
+			"type": "multi_shot",
+			"title": "🔫 Multi-Shot",
+			"description": "+1 Multi-Shot Projectile",
+			"value": 1.0,
+			"rarity": "rare",
+			"min_stage": 5,
+			"weight": 0.8
+		},
+		{
+			"id": "piercing",
+			"type": "piercing",
+			"title": "🥷 Piercing Rounds",
+			"description": "+1 Pierce Level",
+			"value": 1.0,
+			"rarity": "rare",
+			"min_stage": 5,
+			"weight": 0.8
+		},
+		{
+			"id": "payload_expansion",
+			"type": "payload_expansion",
+			"title": "📦 Payload Expansion",
+			"description": "+15% Payload Capacity",
+			"value": 0.15,
+			"rarity": "rare",
+			"min_stage": 10,
+			"weight": 0.7
+		},
+		{
+			"id": "overclock",
+			"type": "overclock",
+			"title": "⚡ Overclock",
+			"description": "+25% DPS for 5 waves",
+			"value": 1.25,
+			"rarity": "legendary",
+			"min_stage": 15,
+			"weight": 0.5
+		},
+		{
+			"id": "tech_credit_boost",
+			"type": "tech_credit_boost",
+			"title": "💎 Credit Matrix",
+			"description": "+20% Tech Credit gain",
+			"value": 0.20,
+			"rarity": "legendary",
+			"min_stage": 20,
+			"weight": 0.4
+		}
+	]
+}

@@ -1,0 +1,28 @@
+ID,Title,Priority,Description
+EPIC-01,Core Combat Loop,High,"Implement automated mecha combat, enemy spawning, wave progression, heart-limit defeat condition."
+TKT-01,Weapon System,High,"Build WeaponSystem.gd with attack speed, targeting, firing cadence, and multi-shot support."
+TKT-02,Enemy Framework,High,"Create enemy entities with HP, damage handling, movement, and death reporting."
+TKT-03,Boss System,High,"Implement boss spawning, boss HP scaling, and stage-completion flow."
+EPIC-02,Progression & Scaling,High,"Implement stage progression matrix, cycle scaling, and robot unlocks."
+TKT-04,ProgressionManager,High,Create autoload singleton for stage progression and unlock tracking.
+TKT-05,Stage Data Loader,Medium,Load and validate progression JSON configuration files.
+TKT-06,Cycle Scaling,High,"Apply HP multipliers, velocity modifiers, and wave density scaling by cycle."
+TKT-07,Robot Unlock Matrix,High,Unlock and auto-equip catch-up mechas at milestone stages.
+EPIC-03,Stage Content,High,Implement 10 stage archetypes and progression mechanics.
+TKT-08,Stage Archetypes,High,"Implement Entry Stream, Rush Protocol, Shielded Packets, Splitting Malware, EMP Jammer, Re-routing Logic, Regenerative Stream, Swarm Carrier, Phantom Grid, and Final Meltdown."
+TKT-09,Data Aggregation Skip,Medium,Implement wave skip multipliers and pacing controls.
+TKT-10,5-Minute Stage Budget,Medium,Ensure stage runtime remains within 300-second target.
+EPIC-04,Meta Progression,High,Build hangar upgrades and permanent progression.
+TKT-11,Ballistic Core,High,Implement attack speed upgrades and multi-shot loader progression.
+TKT-12,Energy Matrix,High,Implement missile cooldown reduction and payload expansion upgrades.
+TKT-13,Tactician Protocol,High,Implement piercing bullets and EMP crowd-control systems.
+EPIC-05,Roguelite Upgrades,Medium,Build software card upgrade system.
+TKT-14,Upgrade Selection UI,Medium,Show upgrade choices every 20 waves.
+TKT-15,Upgrade Effects,Medium,Implement temporary run-based buffs and modifiers.
+EPIC-06,Monetization,Medium,Integrate rewarded ad flows.
+TKT-16,Rewarded Overclock Slot,Medium,Unlock premium fourth upgrade card via rewarded ad.
+TKT-17,Upgrade Re-roll Ads,Medium,Allow ad-based reroll of upgrade choices.
+EPIC-07,UI/UX,High,"Build battle HUD, menus, and progression screens."
+TKT-18,Battle HUD,High,"Implement stage, wave, enemy count, timer, cooldown, and power-up UI."
+TKT-19,Main Navigation,Medium,"Implement Shop, Hangar, Upgrades, Battle Pass, and Leaderboard navigation."
+TKT-20,Unlock Modal,Medium,Display robot unlock rewards and progression notifications.

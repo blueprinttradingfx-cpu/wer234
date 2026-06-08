@@ -1,0 +1,63 @@
+{
+  "global_settings": {
+    "total_stage_time_budget_seconds": 300.0,
+    "loss_heart_threshold": 50,
+    "robot_baseline": {
+      "base_attack_damage": 10.0,
+      "base_attack_speed": 2.5,
+      "missile_burst_damage": 50.0,
+      "missile_battery_cooldown": 10.0
+    }
+  },
+  "stages": [
+    {
+      "stage_id": 1,
+      "stage_name": "Mainframe Database Sector 0-Alpha",
+      "archetype_theme": "The Entry Stream",
+      "boss_hp": 290.0,
+      "wave_phases": [
+        {
+          "phase_name": "The Entry Stream",
+          "wave_range": [1, 99],
+          "spawn_rules": {
+            "enemies_per_wave": 10,
+            "enemy_velocity_modifier": 1.0,
+            "spawn_interval": 0.4,
+            "group_spawn_count": 1,
+            "data_skip_multiplier": 1
+          }
+        }
+      ]
+    },
+    {
+      "stage_id": 2,
+      "stage_name": "Mainframe Database Sector 0-Beta",
+      "archetype_theme": "The Rush Protocol",
+      "boss_hp": 390.0,
+      "wave_phases": [
+        {
+          "phase_name": "The Aggressive Stream",
+          "wave_range": [1, 40],
+          "spawn_rules": {
+            "enemies_per_wave": 14,
+            "enemy_velocity_modifier": 1.35,
+            "spawn_interval": 0.25,
+            "group_spawn_count": 1,
+            "data_skip_multiplier": 1
+          }
+        },
+        {
+          "phase_name": "The System Overload (Double Skips)",
+          "wave_range": [41, 99],
+          "spawn_rules": {
+            "enemies_per_wave": 14,
+            "enemy_velocity_modifier": 1.35,
+            "spawn_interval": 0.4,
+            "group_spawn_count": 2,
+            "data_skip_multiplier": 2
+          }
+        }
+      ]
+    }
+  ]
+}

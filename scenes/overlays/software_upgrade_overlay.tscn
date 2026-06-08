@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://m1n2o3p4q5r6"]
+
+[ext_resource type="Script" path="res://scenes/overlays/software_upgrade_overlay.gd" id="1_overlay"]
+
+[node name="SoftwareUpgradeOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_overlay")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.8)
+
+[node name="Container" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+
+[node name="TitleLabel" type="Label" parent="Container"]
+layout_mode = 2
+text = "SOFTWARE UPGRADE"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="Container"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="CardsContainer" type="HBoxContainer" parent="Container"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Card1" type="PanelContainer" parent="Container/CardsContainer"]
+custom_minimum_size = Vector2(180, 250)
+layout_mode = 2
+
+[node name="Card2" type="PanelContainer" parent="Container/CardsContainer"]
+custom_minimum_size = Vector2(180, 250)
+layout_mode = 2
+
+[node name="Card3" type="PanelContainer" parent="Container/CardsContainer"]
+custom_minimum_size = Vector2(180, 250)
+layout_mode = 2
+
+[node name="AdCard" type="PanelContainer" parent="Container/CardsContainer"]
+custom_minimum_size = Vector2(180, 250)
+layout_mode = 2
+modulate = Color(1, 0.8, 0, 1)
+
+[node name="Spacer2" type="Control" parent="Container"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
+[node name="ReRollButton" type="Button" parent="Container"]
+layout_mode = 2
+text = "🎬 WATCH AD TO RE-ROLL OPTIONS"

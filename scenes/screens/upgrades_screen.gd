@@ -1,0 +1,121 @@
+extends Control
+class_name UpgradesScreen
+
+# --- @onready - plain nodes (%) ---
+@onready var back_button: Button = %BackButton
+@onready var credits_label: Label = %CreditsLabel
+@onready var ballistic_core: PanelContainer = %BallisticCore
+@onready var energy_matrix: PanelContainer = %EnergyMatrix
+@onready var tactician_protocol: PanelContainer = %TacticianProtocol
+
+# --- VARIABLES ---
+var save_system = null
+var game_state = null
+var tech_credits: int = 0
+
+# Upgrade levels tracked via SaveSystem dictionary structures
+var chassis_calibrator_level: int = 0
+var multi_shot_loader_level: int = 0
+var processor_overclock_level: int = 0
+var payload_expansion_level: int = 0
+var piercing_barrel_level: int = 0
+var emp_grid_level: int = 0
+
+func _ready() -> void:
+	save_system = get_node_or_null("/root/SaveSystem")
+	game_state = get_node_or_null("/root/GameState")
+	
+	if back_button:
+		back_button.pressed.connect(_on_back_pressed)
+		
+	_load_upgrade_data()
+	_build_upgrade_ui()
+
+func _load_upgrade_data() -> void:
+	if save_system:
+		# Sync currency and levels directly from the verified SaveSystem autoload
+		tech_credits = save_system.get_tech_credits()
+		
+		chassis_calibrator_level = save_system.get_upgrade_level("ballistic_core", "chassis_calibrator_level")
+		multi_shot_loader_level = save_system.get_upgrade_level("ballistic_core", "multi_shot_loader_level")
+		processor_overclock_level = save_system.get_upgrade_level("energy_matrix", "processor_overclock_level")
+		payload_expansion_level = save_system.get_upgrade_level("energy_matrix", "payload_expansion_level")
+		piercing_barrel_level = save_system.get_upgrade_level("ballistic_core", "piercing_barrel_level")
+		emp_grid_level = save_system.get_upgrade_level("tactician_protocol", "emp_grid_level")
+		
+	if credits_label:
+		credits_label.text = "Tech Credits: %d" % tech_credits
+
+func _build_upgrade_ui() -> void:
+	if credits_label:
+		credits_label.text = "Tech Credits: %d" % tech_credits
+		
+	_populate_module_list(ballistic_core, "Ballistic Core", [
+		{"id": "chassis_calibrator", "name": "Chassis Calibrator", "level": chassis_calibrator_level, "max": 10, "base_cost": 100},
+		{"id": "multi_shot_loader", "name": "Multi-Shot Loader", "level": multi_shot_loader_level, "max": 5, "base_cost": 250},
+		{"id": "piercing_barrel", "name": "Piercing Rail Barrel", "level": piercing_barrel_level, "max": 2, "base_cost": 500}
+	], "ballistic_core")
+
+	_populate_module_list(energy_matrix, "Energy Matrix", [
+		{"id": "processor_overclock", "name": "Processor Overclock", "level": processor_overclock_level, "max": 10, "base_cost": 120},
+		{"id": "payload_expansion", "name": "Payload Expansion", "level": payload_expansion_level, "max": 10, "base_cost": 150}
+	], "energy_matrix")
+
+	_populate_module_list(tactician_protocol, "Tactician Protocol", [
+		{"id": "emp_grid", "name": "EMP Disruption Grid", "level": emp_grid_level, "max": 5, "base_cost": 400}
+	], "tactician_protocol")
+
+func _populate_module_list(container: PanelContainer, module_title: String, upgrades: Array, module_key: String) -> void:
+	if not container: return
+	
+	for child in container.get_children():
+		child.queue_free()
+		
+	var vbox = VBoxContainer.new()
+	container.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "--- %s ---" % module_title.to_upper()
+	vbox.add_child(title)
+	
+	for upgrade in upgrades:
+		var hbox = HBoxContainer.new()
+		var current_lvl: int = upgrade["level"]
+		var max_lvl: int = upgrade["max"]
+		var cost: int = upgrade["base_cost"] * (current_lvl + 1)
+		var upgrade_id: String = upgrade["id"]
+		
+		var info_label = Label.new()
+		info_label.text = "%s (Lvl %d/%d)" % [upgrade["name"], current_lvl, max_lvl]
+		info_label.size_flags_horizontal = SIZE_EXPAND_FILL
+		hbox.add_child(info_label)
+		
+		var buy_button = Button.new()
+		if current_lvl >= max_lvl:
+			buy_button.text = "MAXED"
+			buy_button.disabled = true
+		else:
+			buy_button.text = "Upgrade (%d 🪙)" % cost
+			buy_button.disabled = (tech_credits < cost)
+			# Safe binding pattern: passes pure arguments cleanly to a helper method
+			buy_button.pressed.connect(_on_upgrade_purchased.bind(module_key, upgrade_id + "_level", current_lvl + 1, cost))
+			
+		hbox.add_child(buy_button)
+		vbox.add_child(hbox)
+
+func _on_upgrade_purchased(module: String, upgrade_key: String, next_level: int, cost: int) -> void:
+	if not save_system: return
+	
+	if tech_credits >= cost:
+		if save_system.has_method("deduct_tech_credits"):
+			save_system.deduct_tech_credits(cost)
+		
+		save_system.set_upgrade_level(module, upgrade_key, next_level)
+		
+		# Instantly update values and refresh the menus
+		_load_upgrade_data()
+		_build_upgrade_ui()
+
+func _on_back_pressed() -> void:
+	if game_state:
+		game_state.transition_to_screen(game_state.Screen.MENU)

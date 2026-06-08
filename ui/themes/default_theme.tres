@@ -1,0 +1,23 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://e1f2g3h4i5j6"]
+
+[ext_resource type="FontFile" uid="uid://font_placeholder" path="res://ui/themes/default_font.ttf" id="1_font"]
+
+[resource]
+default_font = ExtResource("1_font")
+
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_color_hover = Color(0.9, 0.9, 0.9, 1)
+Button/colors/font_color_pressed = Color(0.7, 0.7, 0.7, 1)
+Button/colors/font_color_disabled = Color(0.5, 0.5, 0.5, 1)
+Button/constants/font_size = 16
+
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/constants/font_size = 16
+
+LineEdit/colors/font_color = Color(1, 1, 1, 1)
+LineEdit/colors/font_color_placeholder = Color(0.7, 0.7, 0.7, 1)
+LineEdit/constants/font_size = 16
+
+Panel/colors/bg_color = Color(0.1, 0.1, 0.15, 1)
+
+PanelContainer/constants/panel_style = 0

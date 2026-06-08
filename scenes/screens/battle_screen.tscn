@@ -1,0 +1,191 @@
+[gd_scene format=3 uid="uid://eegchbspdsy8"]
+
+[ext_resource type="Script" path="res://scenes/screens/battle_screen.gd" id="1_battle"]
+
+[node name="BattleScreen" type="Control" unique_id=1796291829]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battle")
+
+[node name="RootLayout" type="Control" parent="." unique_id=836487617]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SafeArea" type="Control" parent="RootLayout" unique_id=252417919]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopHeader" type="VBoxContainer" parent="RootLayout/SafeArea" unique_id=1428268449]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 80.0
+grow_horizontal = 2
+
+[node name="HeaderRow1" type="HBoxContainer" parent="RootLayout/SafeArea/TopHeader" unique_id=2081050359]
+layout_mode = 2
+
+[node name="PlayerNameLabel" type="Label" parent="RootLayout/SafeArea/TopHeader/HeaderRow1" unique_id=1885287438]
+layout_mode = 2
+text = "Player Name"
+
+[node name="Spacer1" type="Control" parent="RootLayout/SafeArea/TopHeader/HeaderRow1" unique_id=1351773597]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StageLabel" type="Label" parent="RootLayout/SafeArea/TopHeader/HeaderRow1" unique_id=1157804163]
+layout_mode = 2
+text = "[STAGE 1]"
+
+[node name="Spacer2" type="Control" parent="RootLayout/SafeArea/TopHeader/HeaderRow1" unique_id=254768227]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="WaveLabel" type="Label" parent="RootLayout/SafeArea/TopHeader/HeaderRow1" unique_id=1325322204]
+layout_mode = 2
+text = "[WAVE 1/100]"
+
+[node name="HeaderRow2" type="HBoxContainer" parent="RootLayout/SafeArea/TopHeader" unique_id=1607405553]
+layout_mode = 2
+
+[node name="EnemiesLabel" type="Label" parent="RootLayout/SafeArea/TopHeader/HeaderRow2" unique_id=1096846778]
+layout_mode = 2
+text = "☠️ Alive Enemies: 0/50"
+
+[node name="Spacer3" type="Control" parent="RootLayout/SafeArea/TopHeader/HeaderRow2" unique_id=310312278]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TimerLabel" type="Label" parent="RootLayout/SafeArea/TopHeader/HeaderRow2" unique_id=1940116561]
+layout_mode = 2
+text = "⏱️ CLOCK: 05:00"
+
+[node name="Spacer4" type="Control" parent="RootLayout/SafeArea/TopHeader/HeaderRow2" unique_id=993377705]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SettingsButton" type="Button" parent="RootLayout/SafeArea/TopHeader/HeaderRow2" unique_id=2054756138]
+layout_mode = 2
+text = "⏸️"
+
+[node name="GameArea" type="Control" parent="RootLayout/SafeArea" unique_id=1553778293]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SpawnBoundary" type="ColorRect" parent="RootLayout/SafeArea/GameArea" unique_id=1143776058]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+color = Color(0.2, 0.2, 0.3, 0.3)
+
+[node name="EMPZone" type="ColorRect" parent="RootLayout/SafeArea/GameArea" unique_id=331698649]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.3
+anchor_right = 0.8
+anchor_bottom = 0.7
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.3, 0.3, 0.5, 0.2)
+
+[node name="MechaContainer" type="Control" parent="RootLayout/SafeArea/GameArea" unique_id=2049819397]
+layout_mode = 1
+anchor_left = 0.4
+anchor_top = 0.4
+anchor_right = 0.6
+anchor_bottom = 0.6
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BatteryCooldownUI" type="Control" parent="RootLayout/SafeArea/GameArea" unique_id=595185379]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BatteryLabel" type="Label" parent="RootLayout/SafeArea/GameArea/BatteryCooldownUI" unique_id=562671304]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 20.0
+grow_horizontal = 2
+text = "BATTERY Cooldown:"
+
+[node name="BatteryProgress" type="ProgressBar" parent="RootLayout/SafeArea/GameArea/BatteryCooldownUI" unique_id=11217851]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+value = 100.0
+
+[node name="SoftwarePowerUps" type="HBoxContainer" parent="RootLayout/SafeArea/GameArea" unique_id=1220188152]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -120.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="AtkSpdButton" type="Button" parent="RootLayout/SafeArea/GameArea/SoftwarePowerUps" unique_id=1127568294]
+layout_mode = 2
+text = "⚡ AtkSpd"
+
+[node name="PierceButton" type="Button" parent="RootLayout/SafeArea/GameArea/SoftwarePowerUps" unique_id=1588220751]
+layout_mode = 2
+text = "🎯 Pierce"
+
+[node name="CooldownButton" type="Button" parent="RootLayout/SafeArea/GameArea/SoftwarePowerUps" unique_id=916313395]
+layout_mode = 2
+text = "🔋 Cooldown"
+
+[node name="MoveSpdButton" type="Button" parent="RootLayout/SafeArea/GameArea/SoftwarePowerUps" unique_id=2139117976]
+layout_mode = 2
+text = "💨 MoveSpd"
+
+[node name="MatrixButton" type="Button" parent="RootLayout/SafeArea/GameArea/SoftwarePowerUps" unique_id=2005519644]
+layout_mode = 2
+text = "🧬 Matrix"
+
+[node name="OverclockButton" type="Button" parent="RootLayout/SafeArea/GameArea/SoftwarePowerUps" unique_id=1661600562]
+layout_mode = 2
+text = "🔥 RUN OVERCLOCK"
+
+[node name="BottomNav" type="Control" parent="RootLayout/SafeArea" unique_id=1912275469]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0

@@ -1,0 +1,2 @@
+ $env:GODOT_EXE = "C:\Users\Wilbert\Documents\GD\Godot.exe"
+>> .\tests\run_all_test.ps1

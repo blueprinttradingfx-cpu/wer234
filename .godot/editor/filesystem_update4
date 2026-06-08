@@ -1,0 +1,4 @@
+res://scenes/screens/main_gundam/main_gundam_scene.gd
+res://systems/upgrade_effect_system.gd
+res://systems/battle_manager.gd
+res://systems/game_state.gd

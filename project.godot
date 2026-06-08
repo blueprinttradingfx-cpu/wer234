@@ -1,0 +1,52 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
+[application]
+
+config/name="mecha idle rpg"
+config/description="A mobile idle RPG game with mech battles and upgrades"
+run/main_scene="res://scenes/screens/main_gundam/main_gundam_scene.tscn"
+config/features=PackedStringArray("4.6", "Mobile")
+config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*res://systems/game_state.gd"
+SaveSystem="*res://systems/save_system_mecha.gd"
+BattleManager="*res://systems/battle_manager.gd"
+ProgressionManager="*res://systems/progression_manager.gd"
+
+[display]
+
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+window/size/window_width_override=540
+window/size/window_height_override=960
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
+[input]
+
+ui_touch_emulate_mouse_from_touch=true
+
+[layer_names]
+
+2d_render/layer_1="background"
+2d_render/layer_2="game"
+2d_render/layer_3="ui"
