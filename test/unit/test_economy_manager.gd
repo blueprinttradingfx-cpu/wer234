@@ -1,77 +1,33 @@
-extends Node
+extends GutTest
 
-# Test EconomyManager functionality (EPIC-09 Currency System)
+func test_save_system_autoload_exists() -> void:
+	var save_system = get_node_or_null("/root/SaveSystem")
+	assert_not_null(save_system, "SaveSystem autoload should exist")
 
-func _ready() -> void:
-	print("=== Testing EconomyManager ===")
-	_test_autoload_exists()
-	_test_required_methods()
-	_test_tech_credits()
-	_test_currency_integration()
-	print("\n=== EconomyManager Tests Complete ===")
+func test_save_system_has_required_methods() -> void:
+	var save_system = get_node_or_null("/root/SaveSystem")
+	assert_not_null(save_system, "SaveSystem autoload should exist")
 
-func _test_autoload_exists() -> void:
-	print("\n--- Testing Autoload Existence ---")
-	var economy = get_node_or_null("/root/EconomyManager")
-	if economy:
-		print("✓ EconomyManager autoload exists")
-	else:
-		print("❌ EconomyManager autoload not found")
-
-func _test_required_methods() -> void:
-	print("\n--- Testing Required Methods ---")
-	var economy = get_node_or_null("/root/EconomyManager")
-	if not economy:
-		print("❌ EconomyManager not available for testing")
-		return
-	
 	var required_methods = [
 		"add_tech_credits",
-		"spend_tech_credits",
+		"deduct_tech_credits",
 		"get_tech_credits",
-		"can_afford"
+        "set_tech_credits"
 	]
-	
 	for method_name in required_methods:
-		if economy.has_method(method_name):
-			print("✓ Method exists: %s" % method_name)
-		else:
-			print("❌ Method missing: %s" % method_name)
+		assert_true(save_system.has_method(method_name), "SaveSystem should have method %s" % method_name)
 
-func _test_tech_credits() -> void:
-	print("\n--- Testing Tech Credits ---")
-	var economy = get_node_or_null("/root/EconomyManager")
-	if not economy:
-		return
-	
-	# Test getting tech credits
-	var credits = economy.get_tech_credits()
-	print("✓ get_tech_credits executed (returned: %d)" % credits)
-	
-	# Test adding tech credits
-	economy.add_tech_credits(100)
-	var new_credits = economy.get_tech_credits()
-	if new_credits >= credits + 100:
-		print("✓ add_tech_credits works")
-	else:
-		print("❌ add_tech_credits failed")
+func test_save_system_tech_credits_operations() -> void:
+	var save_system = get_node_or_null("/root/SaveSystem")
+	assert_not_null(save_system, "SaveSystem autoload should exist")
 
-func _test_currency_integration() -> void:
-	print("\n--- Testing Currency Integration ---")
-	var economy = get_node_or_null("/root/EconomyManager")
-	if not economy:
-		return
-	
-	# Test can_afford
-	var can_afford = economy.can_afford(50)
-	print("✓ can_afford executed (returned: %s)" % can_afford)
-	
-	# Test spend_tech_credits
-	var initial_credits = economy.get_tech_credits()
-	if initial_credits >= 50:
-		economy.spend_tech_credits(50)
-		var final_credits = economy.get_tech_credits()
-		if final_credits < initial_credits:
-			print("✓ spend_tech_credits works")
-		else:
-			print("❌ spend_tech_credits failed")
+	var credits = save_system.get_tech_credits()
+	save_system.add_tech_credits(100)
+	assert_true(save_system.get_tech_credits() >= credits + 100, "add_tech_credits should increase credits")
+	save_system.deduct_tech_credits(50)
+	assert_true(save_system.get_tech_credits() <= credits + 50, "deduct_tech_credits should decrease credits")
+
+func test_save_system_set_tech_credits() -> void:
+	var save_system = get_node_or_null("/root/SaveSystem")
+	assert_not_null(save_system, "SaveSystem autoload should exist")
+	assert_true(save_system.has_method("set_tech_credits"), "SaveSystem should have set_tech_credits")

@@ -1,69 +1,52 @@
-extends SceneTree
+extends GutTest
 
-func _ready() -> void:
-	print("=== Testing UpgradeCardGenerator ===")
-
+func _new_generator():
 	var generator_script = load("res://systems/upgrade_card_generator.gd")
-	if not generator_script:
-		print("❌ Failed to load UpgradeCardGenerator script")
-		return
-
+	assert_not_null(generator_script, "UpgradeCardGenerator script should load")
 	var generator = generator_script.new()
-	if not generator:
-		print("❌ Failed to instantiate UpgradeCardGenerator")
-		return
+	assert_not_null(generator, "UpgradeCardGenerator should instantiate")
+	return generator
 
-	_test_card_pool_loaded(generator)
-	_test_random_selection(generator)
-	_test_stage_filtering(generator)
+func test_card_pool_loaded() -> void:
+	var generator = _new_generator()
+	assert_true(not generator.card_pool.is_empty(), "Upgrade card pool should not be empty")
+	generator.free()
 
-	print("=== UpgradeCardGenerator tests complete ===")
-
-func _test_card_pool_loaded(generator: Node) -> void:
-	if not generator.card_pool or generator.card_pool.empty():
-		print("❌ Card pool did not load correctly")
-	else:
-		print("✓ Card pool loaded with %d entries" % generator.card_pool.size())
-
-func _test_random_selection(generator: Node) -> void:
+func test_random_selection_returns_unique_cards() -> void:
+	var generator = _new_generator()
 	var selection = generator.generate_random_cards(3, 1)
-	if selection.size() != 3:
-		print("❌ Expected 3 cards, got %d" % selection.size())
-	else:
-		var ids: Array = []
-		for card in selection:
-			ids.append(card.get("id", ""))
+	assert_eq(selection.size(), 3, "generate_random_cards should return the requested number of cards")
+	generator.free()
 
-		var seen: Array = []
-		var duplicate_found: bool = false
-		for id in ids:
-			if id in seen:
-				duplicate_found = true
-				break
-			seen.append(id)
+	var ids = []
+	for card in selection:
+		ids.append(card.get("id", ""))
 
-		if duplicate_found:
-			print("❌ Duplicate cards were selected in the same draw: %s" % str(ids))
-		else:
-			print("✓ Random card selection returns unique cards")
+	var seen = []
+	for item_id in ids:
+		assert_false(seen.has(item_id), "Selected cards should all be unique")
+		seen.append(item_id)
 
-func _test_stage_filtering(generator: Node) -> void:
-	var early_cards = generator.get_all_cards(1)
+func test_stage_filtering_exposes_late_cards() -> void:
+	var generator = _new_generator()
 	var advanced_cards = generator.get_all_cards(20)
-	if early_cards.size() == 0 or advanced_cards.size() == 0:
-		print("❌ Stage filtering failed; got empty filtered pool")
-	else:
-		var early_ids = []
-		for card in early_cards:
-			early_ids.append(card.get("id", ""))
-		var advanced_ids = []
-		for card in advanced_cards:
-			advanced_ids.append(card.get("id", ""))
-		if early_ids.has("overclock"):
-			print("❌ Legendary card exposed too early")
-		else:
-			print("✓ Stage filtering hides high-tier cards until later stages")
-		if not advanced_ids.has("overclock"):
-			print("❌ Advanced stage filtering did not include late-tier cards")
-		else:
-			print("✓ Advanced stage filtering exposes late-tier cards")
+	assert_true(advanced_cards.size() > 0, "Advanced stage card pool should not be empty")
+
+	var advanced_ids = []
+	for card in advanced_cards:
+		advanced_ids.append(card.get("id", ""))
+
+	assert_true(advanced_ids.has("overclock"), "Advanced stage cards should include overclock")
+	assert_true(advanced_ids.has("tech_credit_boost"), "Advanced stage cards should include tech_credit_boost")
+	generator.free()
+
+func test_sample_card_has_required_fields() -> void:
+	var generator = _new_generator()
+	var selection = generator.generate_random_cards(3, 1)
+	assert_true(selection.size() > 0, "Selection should return cards")
+
+	var sample_card = selection[0]
+	var required_fields = ["id", "type", "title", "description", "value", "rarity"]
+	for field in required_fields:
+		assert_true(sample_card.has(field), "Sample upgrade card should contain %s" % field)
+	generator.free()

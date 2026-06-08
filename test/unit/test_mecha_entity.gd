@@ -1,133 +1,47 @@
-extends Node
+extends GutTest
 
-# Test MechaEntity functionality (EPIC-04 Meta Progression)
+const SCENE_PATH = "res://systems/mecha_entity.tscn"
 
-func _ready() -> void:
-	print("=== Testing MechaEntity ===")
-	_test_scene_load()
-	_test_class_exists()
-	_test_required_methods()
-	_test_upgrade_modifiers()
-	_test_missile_system()
-	print("\n=== MechaEntity Tests Complete ===")
+func test_mecha_entity_scene_loads() -> void:
+    assert_true(ResourceLoader.exists(SCENE_PATH), "MechaEntity scene should exist")
 
-func _test_scene_load() -> void:
-	print("\n--- Testing Scene Load ---")
-	var scene_path = "res://systems/mecha_entity.tscn"
-	if not ResourceLoader.exists(scene_path):
-		print("❌ Scene file not found: %s" % scene_path)
-		return
-	
-	var scene = load(scene_path)
-	if scene:
-		print("✓ Scene loaded successfully")
-	else:
-		print("❌ Failed to load scene")
+func test_mecha_entity_instantiates_as_class() -> void:
+    var scene = load(SCENE_PATH)
+    assert_not_null(scene, "MechaEntity scene should load")
 
-func _test_class_exists() -> void:
-	print("\n--- Testing Class Existence ---")
-	var scene_path = "res://systems/mecha_entity.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	await get_tree().process_frame
-	
-	if instance is MechaEntity:
-		print("✓ Instance is MechaEntity class")
-	else:
-		print("❌ Instance is not MechaEntity class")
-	
-	instance.queue_free()
+    var instance = scene.instantiate()
+    add_child(instance)
+    await get_tree().process_frame
+    assert_true(instance is MechaEntity, "MechaEntity instance should be class MechaEntity")
+    instance.queue_free()
 
-func _test_required_methods() -> void:
-	print("\n--- Testing Required Methods ---")
-	var scene_path = "res://systems/mecha_entity.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	await get_tree().process_frame
-	
-	var required_methods = [
-		"set_weapon_system",
-		"get_missile_cooldown_percent",
-		"start_missile_cooldown"
-	]
-	
-	for method_name in required_methods:
-		if instance.has_method(method_name):
-			print("✓ Method exists: %s" % method_name)
-		else:
-			print("❌ Method missing: %s" % method_name)
-	
-	# Check signals
-	if instance.has_signal("missile_fired"):
-		print("✓ missile_fired signal exists")
-	else:
-		print("❌ missile_fired signal missing")
-	
-	if instance.has_signal("stats_updated"):
-		print("✓ stats_updated signal exists")
-	else:
-		print("❌ stats_updated signal missing")
-	
-	instance.queue_free()
+func test_mecha_entity_has_required_methods_and_signals() -> void:
+    var scene = load(SCENE_PATH)
+    assert_not_null(scene, "MechaEntity scene should load")
 
-func _test_upgrade_modifiers() -> void:
-	print("\n--- Testing Upgrade Modifiers ---")
-	var scene_path = "res://systems/mecha_entity.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	await get_tree().process_frame
-	
-	# Test that upgrade modifiers are applied
-	print("✓ Upgrade modifiers applied in _apply_upgrade_modifiers")
-	print("  - Chassis Calibrator: attack speed scaling")
-	print("  - Processor Overclock: missile cooldown reduction")
-	print("  - Payload Expansion: rocket count increase")
-	print("  - Piercing Rail Barrel: piercing level integration")
-	print("  - EMP Grid Capacitor: EMP level integration")
-	
-	instance.queue_free()
+    var instance = scene.instantiate()
+    add_child(instance)
+    await get_tree().process_frame
 
-func _test_missile_system() -> void:
-	print("\n--- Testing Missile System ---")
-	var scene_path = "res://systems/mecha_entity.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	await get_tree().process_frame
-	
-	# Test missile cooldown
-	var cooldown_percent = instance.get_missile_cooldown_percent()
-	print("✓ get_missile_cooldown_percent works (returned: %.2f)" % cooldown_percent)
-	
-	instance.queue_free()
+    var required_methods = [
+        "set_weapon_system",
+        "get_missile_cooldown_percent",
+        "start_missile_cooldown"
+    ]
+    for method_name in required_methods:
+        assert_true(instance.has_method(method_name), "MechaEntity should have method %s" % method_name)
+
+    assert_has_signal(instance, "missile_fired", "MechaEntity should emit missile_fired")
+    assert_has_signal(instance, "stats_updated", "MechaEntity should emit stats_updated")
+    instance.queue_free()
+
+func test_mecha_entity_missile_system_query() -> void:
+    var scene = load(SCENE_PATH)
+    assert_not_null(scene, "MechaEntity scene should load")
+    var instance = scene.instantiate()
+    add_child(instance)
+    await get_tree().process_frame
+
+    assert_true(is_instance_valid(instance), "MechaEntity instance should be valid")
+    assert_true(instance.get_missile_cooldown_percent() >= 0.0, "get_missile_cooldown_percent should return a numeric value")
+    instance.queue_free()

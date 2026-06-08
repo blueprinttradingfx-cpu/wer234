@@ -29,6 +29,9 @@ func _sync_with_save_system() -> void:
 		active_mecha_id = save_sys.get_active_mecha()
 		unlocked_mecha_ids = save_sys.get_unlocked_mechas()
 
+func load_stage_matrix() -> Dictionary:
+	return stage_db
+
 func _parse_json_file(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
 		push_warning("Missing design database file at: " + path + ". Using defaults.")

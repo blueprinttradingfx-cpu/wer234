@@ -32,7 +32,7 @@ func _ready() -> void:
 
 func setup_fire_timer() -> void:
 	if fire_timer:
-		fire_timer.timeout.connect(_on_fire_timer_timeout)
+		fire_timer.timeout.connect(Callable(self, "_on_fire_timer_timeout"))
 		update_weapon_speed()
 	else:
 		push_error("[WeaponSystem] FireTimer not found")
@@ -49,6 +49,7 @@ func update_weapon_speed() -> void:
 func _on_fire_timer_timeout() -> void:
 	var target_enemies = acquire_targets()
 	if target_enemies.is_empty():
+		print("[WeaponSystem] ATTACK MISSED - No enemies available to target")
 		return # Idle state: No enemies within screen boundaries
 		
 	execute_firing_sequence(target_enemies)
@@ -61,15 +62,26 @@ func acquire_targets() -> Array[Node2D]:
 	# Early exit if the screen board is completely clear
 	if live_enemies.is_empty():
 		return targets
-		
-	# Sort enemies radially by proximity to the center mecha positioning
-	live_enemies.sort_custom(func(a, b): 
-		return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position)
-	)
+	
+	# Create (distance, enemy) pairs for robust sorting
+	var distance_pairs: Array = []
+	var my_pos = global_position
 	
 	for enemy in live_enemies:
-		if is_instance_valid(enemy):
-			targets.append(enemy)
+		if is_instance_valid(enemy) and enemy is Node2D:
+			var distance = my_pos.distance_to(enemy.global_position)
+			distance_pairs.append([distance, enemy])
+	
+	if distance_pairs.is_empty():
+		return targets
+	
+	# Sort by distance (first element of each pair)
+	distance_pairs.sort_custom(func(a, b): return a[0] < b[0])
+	
+	# Extract sorted enemies
+	for pair in distance_pairs:
+		targets.append(pair[1])
+	
 	return targets
 
 ## Evaluates the strict sequential cadence rules based on Upgrade Level
@@ -104,16 +116,22 @@ func execute_firing_sequence(available_targets: Array[Node2D]) -> void:
 
 ## Distributes shots across distinct targets to resolve local crowd density
 func deploy_projectiles(count: int, targets: Array[Node2D]) -> void:
+	if targets.is_empty():
+		return
+	
+	# Primary targeting: all shots focus nearest enemy first
+	# This ensures concentrated fire on closest threat
+	var primary_target = targets[0]  # Always the nearest
+	
 	for i in range(count):
-		# If density is lower than weapon capability, dump remaining payload into the primary target
-		var target = targets[i] if i < targets.size() else targets[0]
+		# Cycle through targets only after primary is focused
+		# i=0: always nearest | i=1+: next nearest (if multi-shot upgrade active)
+		var target = primary_target if i == 0 else (targets[i] if i < targets.size() else primary_target)
 		
 		if is_instance_valid(target):
-			# Apply damage with piercing if enabled
-			_apply_damage_with_piercing(target, base_damage)
-				
-			# Emit tracking payload for visual sprite/laser instancing components
+			# Emit tracking payload for visual projectile instancing
 			enemy_shot_fired.emit({
+				"target_node": target,
 				"target_position": target.global_position,
 				"damage": base_damage,
 				"bullet_index": i

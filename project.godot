@@ -50,3 +50,7 @@ ui_touch_emulate_mouse_from_touch=true
 2d_render/layer_1="background"
 2d_render/layer_2="game"
 2d_render/layer_3="ui"
+
+[rendering]
+
+renderer/rendering_method="mobile"

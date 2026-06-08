@@ -1,8 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://ewj8vpqidlni"]
+[gd_scene format=3 uid="uid://ewj8vpqidlni"]
 
 [ext_resource type="Script" uid="uid://d1cqej5p2ic87" path="res://scenes/screens/main_gundam/main_gundam_scene.gd" id="1_tppnm"]
+[ext_resource type="Script" uid="uid://71oskpbv1n5j" path="res://scenes/screens/main_gundam/enemy_path.gd" id="2_h31v7"]
 
-[node name="MainGameScene" type="Control"]
+[sub_resource type="Curve2D" id="Curve2D_wol8n"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 134, 252, 0, 0, 0, 0, 136, 1478, 0, 0, 0, 0, 962, 1480, 0, 0, 0, 0, 965, 254, 0, 0, 0, 0, 134, 252)
+}
+point_count = 5
+
+[node name="MainGameScene" type="Control" unique_id=1525094551]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +19,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_tppnm")
 
-[node name="ArenaContainer" type="SubViewportContainer" parent="."]
+[node name="ArenaContainer" type="SubViewportContainer" parent="." unique_id=720990364]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,17 +28,24 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="Viewport" type="SubViewport" parent="ArenaContainer"]
+[node name="Viewport" type="SubViewport" parent="ArenaContainer" unique_id=43807245]
 handle_input_locally = false
 size = Vector2i(1080, 1920)
 render_target_update_mode = 4
 
-[node name="GameplayArena" type="Node2D" parent="ArenaContainer/Viewport"]
+[node name="GameplayArena" type="Node2D" parent="ArenaContainer/Viewport" unique_id=155409567]
 unique_name_in_owner = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="SquarePath" type="Path2D" parent="ArenaContainer/Viewport/GameplayArena" unique_id=1391964082]
+curve = SubResource("Curve2D_wol8n")
 
-[node name="UIControl" type="Control" parent="CanvasLayer"]
+[node name="Line2D" type="Line2D" parent="ArenaContainer/Viewport/GameplayArena/SquarePath" unique_id=311287155]
+points = PackedVector2Array(134, 253)
+script = ExtResource("2_h31v7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=961371674]
+
+[node name="UIControl" type="Control" parent="CanvasLayer" unique_id=890483890]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,50 +53,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Header" type="PanelContainer" parent="CanvasLayer/UIControl"]
+[node name="Header" type="PanelContainer" parent="CanvasLayer/UIControl" unique_id=2127803205]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 120.0
 grow_horizontal = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIControl/Header"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIControl/Header" unique_id=458089021]
 layout_mode = 2
 theme_override_constants/margin_left = 30
 theme_override_constants/margin_right = 30
 
-[node name="HeaderLayout" type="HBoxContainer" parent="CanvasLayer/UIControl/Header/MarginContainer"]
+[node name="HeaderLayout" type="HBoxContainer" parent="CanvasLayer/UIControl/Header/MarginContainer" unique_id=364276536]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="StageLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+[node name="StageLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=485746226]
 layout_mode = 2
 text = "STAGE 11"
 
-[node name="WaveLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+[node name="WaveLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=104022919]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "[WAVE 11/100]"
 horizontal_alignment = 1
 
-[node name="AliveCounterLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+[node name="AliveCounterLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=2089405099]
 unique_name_in_owner = true
 layout_mode = 2
 text = "☠️ Alive: 0/50"
 horizontal_alignment = 2
 
-[node name="ClockLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+[node name="ClockLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=316056301]
 unique_name_in_owner = true
 layout_mode = 2
 text = "⏱️ 04:52"
 
-[node name="SettingsButton" type="Button" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+[node name="SettingsButton" type="Button" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=971056944]
 unique_name_in_owner = true
 layout_mode = 2
 text = " ⚙ "
 
-[node name="MidRunStatus" type="VBoxContainer" parent="CanvasLayer/UIControl"]
+[node name="MidRunStatus" type="VBoxContainer" parent="CanvasLayer/UIControl" unique_id=613023923]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -93,54 +108,54 @@ grow_horizontal = 2
 grow_vertical = 0
 alignment = 2
 
-[node name="BatteryProgress" type="ProgressBar" parent="CanvasLayer/UIControl/MidRunStatus"]
+[node name="BatteryProgress" type="ProgressBar" parent="CanvasLayer/UIControl/MidRunStatus" unique_id=1652770017]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 value = 100.0
 
-[node name="SoftwarePowerUps" type="HBoxContainer" parent="CanvasLayer/UIControl/MidRunStatus"]
+[node name="SoftwarePowerUps" type="HBoxContainer" parent="CanvasLayer/UIControl/MidRunStatus" unique_id=150117876]
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="AtkSpdBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+[node name="AtkSpdBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps" unique_id=1722092238]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 90)
 layout_mode = 2
 text = "⚡ AtkSpd"
 
-[node name="PierceBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+[node name="PierceBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps" unique_id=1950416399]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 90)
 layout_mode = 2
 text = "🎯 Pierce"
 
-[node name="CooldownBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+[node name="CooldownBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps" unique_id=1506246008]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 90)
 layout_mode = 2
 text = "🔋 CD"
 
-[node name="MoveSpdBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+[node name="MoveSpdBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps" unique_id=641552247]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 90)
 layout_mode = 2
 text = "💨 Speed"
 
-[node name="MatrixBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+[node name="MatrixBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps" unique_id=1439909123]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(130, 90)
 layout_mode = 2
 text = "🧬 Matrix"
 
-[node name="OverclockBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps"]
+[node name="OverclockBtn" type="Button" parent="CanvasLayer/UIControl/MidRunStatus/SoftwarePowerUps" unique_id=1026583]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(180, 90)
 layout_mode = 2
 text = "🔥 OVERCLOCK"
 
-[node name="Footer" type="PanelContainer" parent="CanvasLayer/UIControl"]
+[node name="Footer" type="PanelContainer" parent="CanvasLayer/UIControl" unique_id=1012510806]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -150,43 +165,43 @@ offset_top = -140.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIControl/Footer"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/UIControl/Footer" unique_id=552220132]
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="FooterLayout" type="HBoxContainer" parent="CanvasLayer/UIControl/Footer/MarginContainer"]
+[node name="FooterLayout" type="HBoxContainer" parent="CanvasLayer/UIControl/Footer/MarginContainer" unique_id=1032978395]
 layout_mode = 2
 theme_override_constants/separation = 15
 alignment = 1
 
-[node name="ShopButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+[node name="ShopButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout" unique_id=1877545511]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "🛒 Shop"
 
-[node name="HangarButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+[node name="HangarButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout" unique_id=259848637]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "⚙️ Hangar"
 
-[node name="UpgradesButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+[node name="UpgradesButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout" unique_id=202028927]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "🔧 Upgrades"
 
-[node name="BattlePassButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+[node name="BattlePassButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout" unique_id=1504646339]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "🎫 Pass"
 
-[node name="LeaderboardButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout"]
+[node name="LeaderboardButton" type="Button" parent="CanvasLayer/UIControl/Footer/MarginContainer/FooterLayout" unique_id=1861326424]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

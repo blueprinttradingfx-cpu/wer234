@@ -58,10 +58,22 @@ func _setup_enemy_spawner() -> void:
 		print("🚀 EnemySpawner node not found in scene tree. Creating dynamically...")
 		spawner_node = Node2D.new()
 		spawner_node.name = "EnemySpawner"
-		var spawner_script = load("res://scripts/enemy_spawner.gd")
+		var spawner_script = load("res://scenes/screens/main_gundam/enemy_spawner.gd")
 		if spawner_script:
 			spawner_node.set_script(spawner_script)
 		add_child(spawner_node)
+	
+	# Inject direct references so the spawner never needs fragile node path lookups
+	if spawner_node:
+		await get_tree().process_frame  # Let _ready() run on spawner first
+		var square_path = gameplay_arena.get_node_or_null("SquarePath") if gameplay_arena else null
+		if square_path and spawner_node.get("square_path_node") != null:
+			spawner_node.square_path_node = square_path
+			print("✅ [EnemySpawner] square_path_node injected: ", square_path.get_path())
+		else:
+			print("⚠ [EnemySpawner] SquarePath not found in GameplayArena!")
+		if spawner_node.get("gameplay_arena_node") != null:
+			spawner_node.gameplay_arena_node = gameplay_arena
 
 func _setup_scene_timers() -> void:
 	# Instantiate WeaponSystem component
@@ -126,14 +138,25 @@ func _start_current_game_session() -> void:
 	if is_instance_valid(battery_update_timer): battery_update_timer.start()
 
 func _instantiate_active_mecha() -> void:
-	if not gameplay_arena: return
+	if not gameplay_arena: 
+		push_error("[MainGameScene] GameplayArena not found!")
+		return
 	for child in gameplay_arena.get_children():
+		# Preserve SquarePath so the enemy spawner keeps its path reference
+		if child.name == "SquarePath":
+			continue
 		child.queue_free()
 		
 	var target_mecha_path = "res://scenes/screens/gundam/gundam.tscn"
 	if ResourceLoader.exists(target_mecha_path):
 		var mecha_scene = load(target_mecha_path)
 		mecha_instance = mecha_scene.instantiate()
+		
+		# Validate mecha transform before adding
+		if mecha_instance.scale == Vector2.ZERO:
+			push_error("[MainGameScene] Mecha has zero scale! Setting to (1,1)")
+			mecha_instance.scale = Vector2.ONE
+		
 		mecha_instance.add_to_group("player") # Explicit group mapping for dynamic tracking scripts
 		gameplay_arena.add_child(mecha_instance)
 		
@@ -143,7 +166,9 @@ func _instantiate_active_mecha() -> void:
 		
 		await get_tree().process_frame
 		if is_instance_valid(mecha_instance) and mecha_instance.has_method("change_base_emotion"):
-			mecha_instance.change_base_emotion(18) 
+			mecha_instance.change_base_emotion(18)
+	else:
+		push_error("[MainGameScene] Mecha scene not found at: ", target_mecha_path) 
 
 func _update_ui() -> void:
 	if alive_counter_label:
@@ -157,14 +182,50 @@ func _update_battery_ui() -> void:
 func _on_enemy_shot_fired(projectile_data: Dictionary) -> void:
 	if not is_game_active: return
 	
+	var target_node = projectile_data.get("target_node", null)
 	var target_position = projectile_data.get("target_position", Vector2.ZERO)
 	var damage = projectile_data.get("damage", 10.0)
 	var bullet_index = projectile_data.get("bullet_index", 0)
 	
-	print("⚔ [WEAPONS FIRE] Shot fired at: ", target_position, " damage: ", damage, " index: ", bullet_index)
+	# Spawn visual projectile
+	_spawn_bullet_projectile(target_node, target_position, damage, bullet_index)
+
+func _spawn_bullet_projectile(target_node: Node2D, target_position: Vector2, damage: float, bullet_index: int) -> void:
+	var bullet_scene = load("res://systems/bullet_projectile.tscn")
+	if not bullet_scene:
+		push_error("[MainGameScene] Failed to load bullet_projectile.tscn")
+		return
 	
-	# WeaponSystem handles the actual damage via take_damage() on enemies
-	# This signal is for VFX/audio feedback hooks 
+	var bullet = bullet_scene.instantiate()
+	# Runtime safeguard: some builds returned a plain Area2D without the script attached.
+	# If `initialize` is missing, attempt to attach the script resource then continue.
+	if not bullet.has_method("initialize"):
+		var bullet_script = load("res://systems/bullet_projectile.gd")
+		if bullet_script:
+			bullet.set_script(bullet_script)
+		else:
+			push_error("[MainGameScene] Failed to load bullet script for runtime attach")
+
+	if not bullet.has_method("initialize"):
+		push_error("[MainGameScene] Bullet instance missing 'initialize' method; aborting spawn")
+		return
+	
+	# Get spawn position from mecha
+	var spawn_position = Vector2.ZERO
+	if is_instance_valid(mecha_instance):
+		spawn_position = mecha_instance.global_position
+	else:
+		# Fallback to center of arena
+		spawn_position = gameplay_arena.global_position if gameplay_arena else Vector2(540, 960)
+	
+	# Use the target node passed from weapon system (already validated)
+	bullet.initialize(spawn_position, target_node, damage)
+	
+	# Add to gameplay arena
+	if gameplay_arena:
+		gameplay_arena.add_child(bullet)
+	else:
+		add_child(bullet) 
 
 func _on_missile_fired(targets: Array, damage_per_rocket: float) -> void:
 	if not is_game_active: return
@@ -327,3 +388,21 @@ func _on_overclock_btn_pressed() -> void:
 	var mecha = gameplay_arena.get_child(0) if gameplay_arena.get_child_count() > 0 else null
 	if mecha and mecha.has_method("change_base_emotion"):
 		mecha.change_base_emotion(13)
+
+func _process(delta: float) -> void:
+	if not is_game_active: 
+		return
+
+	# Explicit check to stop code execution if time expires out
+	if match_remaining_time <= 0:
+		trigger_stage_clear_victory()
+		return
+
+	# If all enemies have been killed and spawner has completed its waves
+	if alive_enemies_count <= 0 and _all_waves_spawned_completely():
+		trigger_stage_clear_victory()
+
+# Helper validation if tracking total wave progress locally
+func _all_waves_spawned_completely() -> bool:
+	# Replace with your wave condition layout if applicable (e.g. current_wave >= total_waves)
+	return current_wave >= 100

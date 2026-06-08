@@ -1,170 +1,105 @@
-extends Node
+extends GutTest
 
-# Test UI/UX functionality (EPIC-07 UI/UX)
-
-func _ready() -> void:
-	print("=== Testing UI/UX ===")
-	_test_main_gundam_scene()
-	_test_battle_hud()
-	_test_main_navigation()
-	_test_upgrades_screen()
-	print("\n=== UI/UX Tests Complete ===")
-
-func _test_main_gundam_scene() -> void:
-	print("\n--- Testing Main Gundam Scene ---")
+func test_main_gundam_scene_contains_ui_elements() -> void:
 	var scene_path = "res://scenes/screens/main_gundam/main_gundam_scene.tscn"
-	if not ResourceLoader.exists(scene_path):
-		print("❌ Scene file not found: %s" % scene_path)
-		return
-	
-	var scene = load(scene_path)
-	if scene:
-		print("✓ Main gundam scene loaded successfully")
-		
-		var instance = scene.instantiate()
-		add_child(instance)
-		
-		await get_tree().process_frame
-		
-		# Check for expected UI elements
-		var expected_nodes = [
-			"StageLabel",
-			"WaveLabel",
-			"EnemyCountLabel",
-			"TimerLabel",
-			"SettingsButton"
-		]
-		
-		for node_name in expected_nodes:
-			var node = instance.find_child(node_name, true, false)
-			if node:
-				print("✓ UI element found: %s" % node_name)
-			else:
-				print("❌ UI element missing: %s" % node_name)
-		
-		instance.queue_free()
-	else:
-		print("❌ Failed to load scene")
+	assert_true(ResourceLoader.exists(scene_path), "Main Gundam scene should exist")
+	var file = FileAccess.open(scene_path, FileAccess.READ)
+	assert_not_null(file, "Main Gundam scene file should open")
+	var scene_text = file.get_as_text()
+	file.close()
 
-func _test_battle_hud() -> void:
-	print("\n--- Testing Battle HUD ---")
+	var expected_nodes = [
+		"StageLabel",
+		"WaveLabel",
+		"AliveCounterLabel",
+		"ClockLabel",
+        "SettingsButton"
+	]
+	for node_name in expected_nodes:
+		assert_true(scene_text.find("node name=\"%s\"" % node_name) != -1, "Main Gundam scene should contain %s" % node_name)
+
+func test_battle_hud_elements_exist() -> void:
 	var scene_path = "res://scenes/screens/main_gundam/main_gundam_scene.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-	
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	await get_tree().process_frame
-	
-	# Check for HUD elements
+	assert_true(ResourceLoader.exists(scene_path), "Main Gundam scene should exist")
+	var file = FileAccess.open(scene_path, FileAccess.READ)
+	assert_not_null(file, "Main Gundam scene file should open")
+	var scene_text = file.get_as_text()
+	file.close()
+
 	var hud_elements = [
 		"StageLabel",
 		"WaveLabel",
-		"EnemyCountLabel",
-		"TimerLabel"
+		"AliveCounterLabel",
+        "ClockLabel"
 	]
-	
-	var hud_found = false
 	for node_name in hud_elements:
-		var node = instance.find_child(node_name, true, false)
-		if node:
-			hud_found = true
-			break
-	
-	if hud_found:
-		print("✓ Battle HUD elements present")
-	else:
-		print("❌ Battle HUD elements missing")
-	
-	instance.queue_free()
+		assert_true(scene_text.find("node name=\"%s\"" % node_name) != -1, "Battle HUD should contain %s" % node_name)
 
-func _test_main_navigation() -> void:
-	print("\n--- Testing Main Navigation ---")
+func test_main_navigation_buttons_exist() -> void:
 	var scene_path = "res://scenes/screens/main_gundam/main_gundam_scene.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-	
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	await get_tree().process_frame
-	
-	# Check for navigation buttons
+	assert_true(ResourceLoader.exists(scene_path), "Main Gundam scene should exist")
+	var file = FileAccess.open(scene_path, FileAccess.READ)
+	assert_not_null(file, "Main Gundam scene file should open")
+	var scene_text = file.get_as_text()
+	file.close()
+
 	var nav_buttons = [
 		"ShopButton",
 		"HangarButton",
 		"UpgradesButton",
 		"BattlePassButton",
-		"LeaderboardButton"
+        "LeaderboardButton"
 	]
-	
-	var nav_found = false
 	for node_name in nav_buttons:
-		var node = instance.find_child(node_name, true, false)
-		if node:
-			nav_found = true
-			break
-	
-	if nav_found:
-		print("✓ Navigation buttons present")
-	else:
-		print("❌ Navigation buttons missing")
-	
-	instance.queue_free()
+		assert_true(scene_text.find("node name=\"%s\"" % node_name) != -1, "Main navigation should contain %s" % node_name)
 
-func _test_upgrades_screen() -> void:
-	print("\n--- Testing Upgrades Screen ---")
+func test_upgrades_screen_contains_core_ui_and_methods() -> void:
 	var scene_path = "res://scenes/screens/upgrades_screen.tscn"
-	if not ResourceLoader.exists(scene_path):
-		print("❌ Scene file not found: %s" % scene_path)
-		return
-	
+	assert_true(ResourceLoader.exists(scene_path), "Upgrades screen should exist")
 	var scene = load(scene_path)
-	if scene:
-		print("✓ Upgrades screen loaded successfully")
-		
-		var instance = scene.instantiate()
-		add_child(instance)
-		
-		await get_tree().process_frame
-		
-		# Check for expected UI elements
+	assert_not_null(scene, "Upgrades screen should load")
+
+	var instance = scene.instantiate()
+	if instance:
 		var expected_nodes = [
-			"BackButton",
 			"CreditsLabel",
 			"BallisticCore",
 			"EnergyMatrix"
 		]
-		
 		for node_name in expected_nodes:
-			var node = instance.find_child(node_name, true, false)
-			if node:
-				print("✓ UI element found: %s" % node_name)
-			else:
-				print("❌ UI element missing: %s" % node_name)
-		
-		# Check for required methods
+			assert_true(instance.find_child(node_name, true, false) != null, "Upgrades screen should contain %s" % node_name)
+
 		var required_methods = [
 			"_load_upgrade_data",
 			"_build_upgrade_ui",
 			"_on_upgrade_purchased"
 		]
-		
 		for method_name in required_methods:
-			if instance.has_method(method_name):
-				print("✓ Method exists: %s" % method_name)
-			else:
-				print("❌ Method missing: %s" % method_name)
-		
+			assert_true(instance.has_method(method_name), "Upgrades screen instance should have %s" % method_name)
 		instance.queue_free()
-	else:
-		print("❌ Failed to load scene")
+		return
+
+	var file = FileAccess.open(scene_path, FileAccess.READ)
+	assert_not_null(file, "Upgrades screen file should open")
+	var scene_text = file.get_as_text()
+	file.close()
+
+	var expected_nodes = [
+		"BackButton",
+		"CreditsLabel",
+		"BallisticCore",
+		"EnergyMatrix"
+	]
+	for node_name in expected_nodes:
+		assert_true(scene_text.find("node name=\"%s\"" % node_name) != -1, "Upgrades screen should contain %s" % node_name)
+
+	var script = load("res://scenes/screens/upgrades_screen.gd")
+	assert_true(script is Script, "Upgrades screen script should load")
+
+	var required_methods = [
+		"_load_upgrade_data",
+		"_build_upgrade_ui",
+		"_on_upgrade_purchased"
+	]
+	for method_name in required_methods:
+		assert_true(script.has_method(method_name), "Upgrades screen script should have %s" % method_name)

@@ -56,7 +56,7 @@ func _ready() -> void:
 func _setup_missile_system() -> void:
 	missile_cooldown_timer = Timer.new()
 	missile_cooldown_timer.wait_time = missile_battery_cooldown
-	missile_cooldown_timer.timeout.connect(_on_missile_cooldown_complete)
+	missile_cooldown_timer.timeout.connect(Callable(self, "_on_missile_cooldown_complete"))
 	add_child(missile_cooldown_timer)
 	missile_cooldown_timer.start()
 
@@ -131,15 +131,23 @@ func _acquire_missile_targets() -> Array:
 	if live_enemies.is_empty():
 		return targets
 	
-	# Sort by proximity to mecha
-	live_enemies.sort_custom(func(a, b): 
+	# Filter valid enemies first
+	var valid_enemies: Array[Node2D] = []
+	for enemy in live_enemies:
+		if is_instance_valid(enemy):
+			valid_enemies.append(enemy)
+	
+	if valid_enemies.is_empty():
+		return targets
+	
+	# Sort by proximity to mecha using stable sort
+	valid_enemies.sort_custom(func(a, b): 
 		return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position)
 	)
 	
 	# Get up to max_targets closest enemies
-	for i in range(min(missile_max_targets, live_enemies.size())):
-		if is_instance_valid(live_enemies[i]):
-			targets.append(live_enemies[i])
+	for i in range(min(missile_max_targets, valid_enemies.size())):
+		targets.append(valid_enemies[i])
 	
 	return targets
 

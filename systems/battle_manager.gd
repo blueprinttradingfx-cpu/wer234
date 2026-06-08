@@ -224,6 +224,13 @@ func _get_random_spawn_position() -> Vector2:
 func _on_enemy_destroyed() -> void:
 	register_enemy_destroyed()
 
+func end_battle(reason: String = "Manual End") -> void:
+	if battle_state == BattleState.ACTIVE:
+		_handle_defeat(reason)
+
+func register_enemy_destruction() -> void:
+	register_enemy_destroyed()
+
 func _spawn_boss() -> void:
 	var boss_scene = load("res://systems/boss_unit.tscn")
 	if not boss_scene:

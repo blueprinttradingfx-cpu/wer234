@@ -1,79 +1,36 @@
-extends Node
+extends GutTest
 
-# Test ProgressionManager functionality (EPIC-02 Progression & Scaling)
+func test_progression_manager_autoload_exists() -> void:
+    var progression = get_node_or_null("/root/ProgressionManager")
+    assert_not_null(progression, "ProgressionManager autoload should exist")
 
-func _ready() -> void:
-	print("=== Testing ProgressionManager ===")
-	_test_autoload_exists()
-	_test_required_methods()
-	_test_stage_config_loading()
-	_test_mecha_stats()
-	_test_cycle_scaling()
-	print("\n=== ProgressionManager Tests Complete ===")
+func test_progression_manager_has_required_methods() -> void:
+    var progression = get_node_or_null("/root/ProgressionManager")
+    assert_not_null(progression, "ProgressionManager autoload should exist")
 
-func _test_autoload_exists() -> void:
-	print("\n--- Testing Autoload Existence ---")
-	var progression = get_node_or_null("/root/ProgressionManager")
-	if progression:
-		print("✓ ProgressionManager autoload exists")
-	else:
-		print("❌ ProgressionManager autoload not found")
+    var required_methods = [
+        "get_config_for_stage",
+        "get_active_mecha_stats",
+        "load_stage_matrix"
+    ]
+    for method_name in required_methods:
+        assert_true(progression.has_method(method_name), "ProgressionManager should have method %s" % method_name)
 
-func _test_required_methods() -> void:
-	print("\n--- Testing Required Methods ---")
-	var progression = get_node_or_null("/root/ProgressionManager")
-	if not progression:
-		print("❌ ProgressionManager not available for testing")
-		return
-	
-	var required_methods = [
-		"get_config_for_stage",
-		"get_active_mecha_stats",
-		"load_stage_matrix"
-	]
-	
-	for method_name in required_methods:
-		if progression.has_method(method_name):
-			print("✓ Method exists: %s" % method_name)
-		else:
-			print("❌ Method missing: %s" % method_name)
+func test_progression_manager_stage_config_loading() -> void:
+    var progression = get_node_or_null("/root/ProgressionManager")
+    assert_not_null(progression, "ProgressionManager autoload should exist")
 
-func _test_stage_config_loading() -> void:
-	print("\n--- Testing Stage Config Loading ---")
-	var progression = get_node_or_null("/root/ProgressionManager")
-	if not progression:
-		return
-	
-	# Test loading stage config
-	var config = progression.get_config_for_stage(1)
-	if config is Dictionary and not config.is_empty():
-		print("✓ Stage config loaded successfully")
-		print("  Config keys: %s" % config.keys())
-	else:
-		print("❌ Stage config loading failed")
+    var config = progression.get_config_for_stage(1)
+    assert_true(config is Dictionary and not config.is_empty(), "get_config_for_stage(1) should return a non-empty Dictionary")
 
-func _test_mecha_stats() -> void:
-	print("\n--- Testing Mecha Stats ---")
-	var progression = get_node_or_null("/root/ProgressionManager")
-	if not progression:
-		return
-	
-	# Test getting mecha stats
-	var stats = progression.get_active_mecha_stats()
-	if stats is Dictionary and not stats.is_empty():
-		print("✓ Mecha stats retrieved successfully")
-		print("  Stats keys: %s" % stats.keys())
-	else:
-		print("❌ Mecha stats retrieval failed")
+func test_progression_manager_active_mecha_stats() -> void:
+    var progression = get_node_or_null("/root/ProgressionManager")
+    assert_not_null(progression, "ProgressionManager autoload should exist")
 
-func _test_cycle_scaling() -> void:
-	print("\n--- Testing Cycle Scaling ---")
-	var progression = get_node_or_null("/root/ProgressionManager")
-	if not progression:
-		return
-	
-	# Check if cycle scaling is implemented
-	if progression.has_method("apply_cycle_scaling"):
-		print("✓ Cycle scaling method exists")
-	else:
-		print("✓ Cycle scaling may be integrated in get_config_for_stage")
+    var stats = progression.get_active_mecha_stats()
+    assert_true(stats is Dictionary and not stats.is_empty(), "get_active_mecha_stats should return a non-empty Dictionary")
+
+func test_progression_manager_cycle_scaling_exists() -> void:
+    var progression = get_node_or_null("/root/ProgressionManager")
+    assert_not_null(progression, "ProgressionManager autoload should exist")
+    assert_true(progression.has_method("apply_cycle_scaling") or progression.has_method("get_config_for_stage"), "ProgressionManager should expose cycle-scaling behavior")

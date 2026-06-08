@@ -1,74 +1,30 @@
-extends Node
+extends GutTest
 
-# Test EnemyUnit functionality (EPIC-01 Core Combat Loop)
+const SCENE_PATH = "res://systems/enemy_unit.tscn"
 
-func _ready() -> void:
-	print("=== Testing EnemyUnit ===")
-	_test_scene_load()
-	_test_class_exists()
-	_test_required_methods()
-	_test_hp_system()
-	_test_damage_system()
-	_test_movement()
-	_test_shield_mechanics()
-	_test_splitting_mechanics()
-	_test_emp_mechanics()
-	_test_re_routing_mechanics()
-	_test_regeneration_mechanics()
-	_test_carrier_mechanics()
-	_test_cloak_mechanics()
-	print("\n=== EnemyUnit Tests Complete ===")
+func test_enemy_unit_scene_loads() -> void:
+	assert_true(ResourceLoader.exists(SCENE_PATH), "EnemyUnit scene should exist")
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
 
-func _test_scene_load() -> void:
-	print("\n--- Testing Scene Load ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		print("❌ Scene file not found: %s" % scene_path)
-		return
-	
-	var scene = load(scene_path)
-	if scene:
-		print("✓ Scene loaded successfully")
-	else:
-		print("❌ Failed to load scene")
+func test_enemy_unit_instantiates_as_class() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
 
-func _test_class_exists() -> void:
-	print("\n--- Testing Class Existence ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	if instance is EnemyUnit:
-		print("✓ Instance is EnemyUnit class")
-	else:
-		print("❌ Instance is not EnemyUnit class")
-	
+	assert_true(instance is EnemyUnit, "EnemyUnit instance should be of type EnemyUnit")
 	instance.queue_free()
 
-func _test_required_methods() -> void:
-	print("\n--- Testing Required Methods ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_has_required_methods() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
+
 	var required_methods = [
 		"take_damage",
 		"execute_destruction",
@@ -81,289 +37,150 @@ func _test_required_methods() -> void:
 		"enable_regen",
 		"enable_carrier",
 		"enable_cloak",
-		"is_targetable"
+        "is_targetable"
 	]
-	
 	for method_name in required_methods:
-		if instance.has_method(method_name):
-			print("✓ Method exists: %s" % method_name)
-		else:
-			print("❌ Method missing: %s" % method_name)
-	
+		assert_true(instance.has_method(method_name), "EnemyUnit should have method %s" % method_name)
+
 	instance.queue_free()
 
-func _test_hp_system() -> void:
-	print("\n--- Testing HP System ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_hp_and_damage() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Test initial HP
-	if is_equal_approx(instance.current_hp, instance.max_hp):
-		print("✓ Initial HP equals max HP")
-	else:
-		print("❌ Initial HP does not equal max HP")
-	
-	# Test damage
+
+	assert_true(is_equal_approx(instance.current_hp, instance.max_hp), "EnemyUnit should start at max HP")
 	var initial_hp = instance.current_hp
 	instance.take_damage(5.0)
-	if instance.current_hp < initial_hp:
-		print("✓ take_damage reduces HP")
-	else:
-		print("❌ take_damage does not reduce HP")
-	
+	assert_true(instance.current_hp < initial_hp, "take_damage should reduce HP")
 	instance.queue_free()
 
-func _test_damage_system() -> void:
-	print("\n--- Testing Damage System ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+var _enemy_destroyed_called: bool = false
+
+func _on_test_enemy_destroyed() -> void:
+	_enemy_destroyed_called = true
+
+func test_enemy_unit_destruction_signal() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Test destruction signal
-	var destroyed_called = false
-	instance.destroyed.connect(func(): destroyed_called = true)
-	
-	instance.take_damage(1000.0)  # Overkill damage
-	
+
+	_enemy_destroyed_called = false
+	instance.destroyed.connect(Callable(self, "_on_test_enemy_destroyed"))
+
+	instance.take_damage(1000.0)
 	await get_tree().create_timer(0.1).timeout
-	
-	if destroyed_called:
-		print("✓ destroyed signal emitted on death")
-	else:
-		print("❌ destroyed signal not emitted on death")
-	
-	instance.queue_free()
+	assert_true(_enemy_destroyed_called, "EnemyUnit should emit destroyed signal on death")
 
-func _test_movement() -> void:
-	print("\n--- Testing Movement ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_movement_controls() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Test speed modifier
+
 	instance.set_speed_modifier(0.5)
-	if is_equal_approx(instance.speed_modifier, 0.5):
-		print("✓ set_speed_modifier works")
-	else:
-		print("❌ set_speed_modifier failed")
-	
-	# Test target position
+	assert_true(is_equal_approx(instance.speed_modifier, 0.5), "set_speed_modifier should update speed_modifier")
+
 	var test_pos = Vector2(100, 100)
 	instance.set_target_position(test_pos)
-	if instance.target_position == test_pos:
-		print("✓ set_target_position works")
-	else:
-		print("❌ set_target_position failed")
-	
+	assert_eq(instance.target_position, test_pos, "set_target_position should update target_position")
 	instance.queue_free()
 
-func _test_shield_mechanics() -> void:
-	print("\n--- Testing Shield Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_shield_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable shield
+
 	instance.enable_shield(10.0, 0.5)
-	if instance.max_shield_hp > 0:
-		print("✓ Shield enabled successfully")
-	else:
-		print("❌ Shield not enabled")
-	
-	# Test shield absorption
+	assert_true(instance.max_shield_hp > 0, "enable_shield should increase max_shield_hp")
+
 	var initial_hp = instance.current_hp
 	instance.take_damage(5.0)
-	if instance.current_hp == initial_hp:  # HP should not change if shield absorbs
-		print("✓ Shield absorbs damage")
-	else:
-		print("❌ Shield does not absorb damage")
-	
+	assert_eq(instance.current_hp, initial_hp, "Shield should absorb damage if active")
 	instance.queue_free()
 
-func _test_splitting_mechanics() -> void:
-	print("\n--- Testing Splitting Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_splitting_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable splitting
+
 	instance.enable_splitting(2, 0, 2, 0.5)
-	if instance.can_split:
-		print("✓ Splitting enabled successfully")
-	else:
-		print("❌ Splitting not enabled")
-	
+	assert_true(instance.can_split, "enable_splitting should set can_split")
 	instance.queue_free()
 
-func _test_emp_mechanics() -> void:
-	print("\n--- Testing EMP Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_emp_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable EMP
+
 	instance.enable_emp(150.0, 2.0, true)
-	if instance.has_emp:
-		print("✓ EMP enabled successfully")
-	else:
-		print("❌ EMP not enabled")
-	
+	assert_true(instance.has_emp, "enable_emp should set has_emp")
 	instance.queue_free()
 
-func _test_re_routing_mechanics() -> void:
-	print("\n--- Testing Re-routing Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_rerouting_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable re-routing
+
 	instance.enable_re_routing(3.0)
-	if instance.can_re_route:
-		print("✓ Re-routing enabled successfully")
-	else:
-		print("❌ Re-routing not enabled")
-	
+	assert_true(instance.can_re_route, "enable_re_routing should set can_re_route")
 	instance.queue_free()
 
-func _test_regeneration_mechanics() -> void:
-	print("\n--- Testing Regeneration Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_regeneration_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable regeneration
+
 	instance.enable_regen(1.0, 2.0)
-	if instance.can_regen:
-		print("✓ Regeneration enabled successfully")
-	else:
-		print("❌ Regeneration not enabled")
-	
+	assert_true(instance.can_regen, "enable_regen should set can_regen")
 	instance.queue_free()
 
-func _test_carrier_mechanics() -> void:
-	print("\n--- Testing Carrier Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_carrier_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable carrier
+
 	instance.enable_carrier(5, 2.0, 0.3)
-	if instance.is_carrier:
-		print("✓ Carrier enabled successfully")
-	else:
-		print("❌ Carrier not enabled")
-	
+	assert_true(instance.is_carrier, "enable_carrier should set is_carrier")
 	instance.queue_free()
 
-func _test_cloak_mechanics() -> void:
-	print("\n--- Testing Cloak Mechanics ---")
-	var scene_path = "res://systems/enemy_unit.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
+func test_enemy_unit_cloak_mechanics() -> void:
+	var scene = load(SCENE_PATH)
+	assert_not_null(scene, "EnemyUnit scene should load")
+
 	var instance = scene.instantiate()
 	add_child(instance)
-	
 	await get_tree().process_frame
-	
-	# Enable cloak
+
 	instance.enable_cloak(3.0, 5.0)
-	if instance.can_cloak:
-		print("✓ Cloak enabled successfully")
-	else:
-		print("❌ Cloak not enabled")
-	
-	# Test is_targetable
-	if instance.has_method("is_targetable"):
-		var targetable = instance.is_targetable()
-		print("✓ is_targetable method works (returns: %s)" % targetable)
-	else:
-		print("❌ is_targetable method missing")
-	
+	assert_true(instance.can_cloak, "enable_cloak should set can_cloak")
+
+	assert_true(instance.has_method("is_targetable"), "EnemyUnit should have is_targetable")
+	assert_true(instance.is_targetable(), "is_targetable should return a boolean")
 	instance.queue_free()

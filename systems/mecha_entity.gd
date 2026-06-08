@@ -27,7 +27,7 @@ func _ready() -> void:
 	# Setup missile cooldown timer
 	missile_timer = Timer.new()
 	missile_timer.wait_time = missile_cooldown
-	missile_timer.timeout.connect(_on_missile_cooldown_complete)
+	missile_timer.timeout.connect(Callable(self, "_on_missile_cooldown_complete"))
 	add_child(missile_timer)
 	
 	_load_mecha_stats()
@@ -104,9 +104,7 @@ func _fire_homing_missiles() -> void:
 		return
 	
 	# Sort enemies by proximity
-	enemies.sort_custom(func(a, b): 
-		return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position)
-	)
+	enemies.sort_custom(Callable(self, "_compare_enemy_distance"))
 	
 	# Fire missiles at up to max_targets
 	var targets_to_fire = min(enemies.size(), missile_max_targets)
@@ -178,3 +176,13 @@ func get_missile_cooldown_percent() -> float:
 	if missile_cooldown <= 0:
 		return 1.0
 	return 1.0 - (missile_cooldown_remaining / missile_cooldown)
+
+## Comparator for sorting enemies by distance from this node
+func _compare_enemy_distance(a: Node2D, b: Node2D) -> int:
+	var da = global_position.distance_to(a.global_position)
+	var db = global_position.distance_to(b.global_position)
+	if da < db:
+		return -1
+	elif da > db:
+		return 1
+	return 0

@@ -1,44 +1,19 @@
-extends Node
+extends GutTest
 
-# Ensure "extends Node" is exactly on line 1 without leading spaces or characters.
+const SCENE_PATH = "res://scenes/screens/main_gundam/main_gundam_scene.tscn"
 
-func _ready() -> void:
-	print("=== Testing Main Gundam Scene ===")
-	_test_scene_load()
-	_test_required_nodes()
+func test_main_gundam_scene_loads() -> void:
+	assert_true(ResourceLoader.exists(SCENE_PATH), "Main Gundam scene should exist")
 
-func _test_scene_load() -> void:
-	print("\n--- Testing Scene Load ---")
-	var scene_path = "res://scenes/screens/main_gundam/main_gundam_scene.tscn"
-	if not ResourceLoader.exists(scene_path):
-		print("❌ Scene file not found: %s" % scene_path)
-		return
-	
-	var scene = load(scene_path)
-	if scene:
-		print("✓ Scene loaded successfully")
-	else:
-		print("❌ Failed to load scene")
+func test_main_gundam_scene_contains_required_nodes() -> void:
+	var file = FileAccess.open(SCENE_PATH, FileAccess.READ)
+	assert_not_null(file, "Main Gundam scene file should open")
+	var scene_text = file.get_as_text()
+	file.close()
 
-func _test_required_nodes() -> void:
-	print("\n--- Testing Required Nodes ---")
-	var scene_path = "res://scenes/screens/main_gundam/main_gundam_scene.tscn"
-	if not ResourceLoader.exists(scene_path):
-		return
-		
-	var scene = load(scene_path)
-	if not scene:
-		return
-	
-	var instance = scene.instantiate()
-	add_child(instance)
-	
-	# Wait for the scene tree to initialize nodes safely
-	await get_tree().process_frame
-	
 	var required_nodes = [
 		"AtkSpdBtn",
-		"PierceBtn", 
+		"PierceBtn",
 		"CooldownBtn",
 		"MoveSpdBtn",
 		"MatrixBtn",
@@ -53,14 +28,8 @@ func _test_required_nodes() -> void:
 		"HangarButton",
 		"UpgradesButton",
 		"BattlePassButton",
-		"LeaderboardButton"
+        "LeaderboardButton"
 	]
-	
+
 	for node_name in required_nodes:
-		var node = instance.get_node_or_null("%" + node_name)
-		if node:
-			print("✓ Found node: %s" % node_name)
-		else:
-			print("❌ Missing node: %s" % node_name)
-			
-	instance.queue_free()
+		assert_true(scene_text.find("node name=\"%s\"" % node_name) != -1, "Main Gundam scene should contain %s" % node_name)
