@@ -6,7 +6,7 @@
 [sub_resource type="Curve2D" id="Curve2D_wol8n"]
 resource_local_to_scene = true
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 134, 252, 0, 0, 0, 0, 136, 1478, 0, 0, 0, 0, 962, 1480, 0, 0, 0, 0, 965, 254, 0, 0, 0, 0, 134, 252)
+"points": PackedVector2Array(0, 0, 0, 0, 134, 252, 0, 0, 0, 0, 965, 254, 0, 0, 0, 0, 962, 1480, 0, 0, 0, 0, 136, 1478, 0, 0, 0, 0, 134, 252)
 }
 point_count = 5
 

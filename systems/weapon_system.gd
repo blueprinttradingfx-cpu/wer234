@@ -49,7 +49,6 @@ func update_weapon_speed() -> void:
 func _on_fire_timer_timeout() -> void:
 	var target_enemies = acquire_targets()
 	if target_enemies.is_empty():
-		print("[WeaponSystem] ATTACK MISSED - No enemies available to target")
 		return # Idle state: No enemies within screen boundaries
 		
 	execute_firing_sequence(target_enemies)

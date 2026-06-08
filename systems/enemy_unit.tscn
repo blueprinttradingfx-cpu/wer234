@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://g3h4i5j6k7l8"]
 
 [ext_resource type="Script" uid="uid://bsemk6hfh246t" path="res://systems/enemy_unit.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://elnemkp3jvc2" path="res://assets/ui/enemies.png" id="2_f3w41"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyscm"]
+atlas = ExtResource("2_f3w41")
+region = Rect2(47, 48, 185, 137)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0"]
 radius = 17.6
@@ -11,6 +16,7 @@ script = ExtResource("1")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=246795653]
 modulate = Color(1, 0.2, 0.2, 1)
+texture = SubResource("AtlasTexture_vyscm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=378075492]
 shape = SubResource("CircleShape2D_0")

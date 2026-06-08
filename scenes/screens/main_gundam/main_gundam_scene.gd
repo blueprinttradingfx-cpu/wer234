@@ -19,7 +19,6 @@ const UPGRADE_EFFECT_SYSTEM := preload("res://systems/upgrade_effect_system.gd")
 
 # --- Timers and Combat Handles ---
 var weapon_system: Node2D = null
-var wave_spawn_timer: Timer
 var spawner_node: Node2D = null
 var mecha_instance: Node2D = null
 var battery_update_timer: Timer
@@ -61,18 +60,24 @@ func _setup_enemy_spawner() -> void:
 		var spawner_script = load("res://scenes/screens/main_gundam/enemy_spawner.gd")
 		if spawner_script:
 			spawner_node.set_script(spawner_script)
+		spawner_node.set("enemy_scene", load("res://systems/enemy_unit.tscn"))
 		add_child(spawner_node)
+		
+		# Register spawner with BattleManager
+		var bm = get_node_or_null("/root/BattleManager")
+		if bm:
+			bm.set("custom_spawner", spawner_node)
 	
 	# Inject direct references so the spawner never needs fragile node path lookups
 	if spawner_node:
 		await get_tree().process_frame  # Let _ready() run on spawner first
 		var square_path = gameplay_arena.get_node_or_null("SquarePath") if gameplay_arena else null
-		if square_path and spawner_node.get("square_path_node") != null:
+		if square_path and "square_path_node" in spawner_node:
 			spawner_node.square_path_node = square_path
 			print("✅ [EnemySpawner] square_path_node injected: ", square_path.get_path())
 		else:
 			print("⚠ [EnemySpawner] SquarePath not found in GameplayArena!")
-		if spawner_node.get("gameplay_arena_node") != null:
+		if "gameplay_arena_node" in spawner_node:
 			spawner_node.gameplay_arena_node = gameplay_arena
 
 func _setup_scene_timers() -> void:
@@ -85,11 +90,6 @@ func _setup_scene_timers() -> void:
 			weapon_system.enemy_shot_fired.connect(_on_enemy_shot_fired)
 	else:
 		push_error("[MainGameScene] Failed to load WeaponSystem scene")
-	
-	wave_spawn_timer = Timer.new()
-	wave_spawn_timer.wait_time = 0.6 
-	wave_spawn_timer.timeout.connect(_on_wave_spawn_cycle)
-	add_child(wave_spawn_timer)
 	
 	# Battery UI update timer
 	battery_update_timer = Timer.new()
@@ -134,7 +134,6 @@ func _start_current_game_session() -> void:
 	_instantiate_active_mecha()
 	
 	if is_instance_valid(weapon_system): weapon_system.update_weapon_speed()
-	if is_instance_valid(wave_spawn_timer): wave_spawn_timer.start()
 	if is_instance_valid(battery_update_timer): battery_update_timer.start()
 
 func _instantiate_active_mecha() -> void:
@@ -231,10 +230,6 @@ func _on_missile_fired(targets: Array, damage_per_rocket: float) -> void:
 	if not is_game_active: return
 	print("🚀 [MISSILE IMPACT] ", targets.size(), " missiles dealing ", damage_per_rocket, " damage each")
 
-func _on_wave_spawn_cycle() -> void:
-	if not is_game_active: return
-	if is_instance_valid(spawner_node) and spawner_node.has_method("spawn_wave_enemy"):
-		spawner_node.spawn_wave_enemy()
 
 func open_popup_view(menu_type: String) -> void:
 	print("Instantiating overlay view container sector: ", menu_type.to_upper())
@@ -242,7 +237,6 @@ func open_popup_view(menu_type: String) -> void:
 func trigger_system_overflow_failure() -> void:
 	is_game_active = false
 	if is_instance_valid(weapon_system): weapon_system.fire_timer.stop()
-	if is_instance_valid(wave_spawn_timer): wave_spawn_timer.stop()
 	if is_instance_valid(battery_update_timer): battery_update_timer.stop()
 	
 	print("💥 STAGE OVERFLOW FAILURE: Combat zone breached.")
@@ -253,7 +247,6 @@ func trigger_system_overflow_failure() -> void:
 func trigger_stage_clear_victory() -> void:
 	is_game_active = false
 	if is_instance_valid(weapon_system): weapon_system.fire_timer.stop()
-	if is_instance_valid(wave_spawn_timer): wave_spawn_timer.stop()
 	if is_instance_valid(battery_update_timer): battery_update_timer.stop()
 	
 	print("🏆 STAGE CLEAR VICTORY: Operational sector stabilized.")

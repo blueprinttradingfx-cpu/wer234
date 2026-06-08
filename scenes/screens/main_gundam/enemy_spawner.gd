@@ -15,22 +15,21 @@ var max_screen_capacity: int = 50
 var square_path_node: Path2D = null
 var gameplay_arena_node: Node2D = null
 
-func spawn_wave_enemy() -> void:
+func spawn_wave_enemy() -> Node2D:
+	print("[EnemySpawner] spawn_wave_enemy called")
 	if active_enemies.size() >= max_screen_capacity:
-		print("⚠ Spawner choked: Maximum live threshold met (50/50).")
-		return
+		print("[EnemySpawner] Capacity reached")
+		return null
 		
 	if not enemy_scene:
-		_fallback_mock_spawn()
-		return
+		print("[EnemySpawner] enemy_scene is null! Falling back to mock")
+		return _fallback_mock_spawn()
 
 	# 1. Fetch our visual path via injected reference
 	var square_path = square_path_node
 	if not square_path:
-		print("⚠ [EnemySpawner] square_path_node not set - falling back to manual spawn")
-		# Fallback to manual square corner movement if SquarePath doesn't exist
-		_spawn_enemy_manual_square()
-		return
+		print("[EnemySpawner] square_path is null! Falling back to manual square")
+		return _spawn_enemy_manual_square()
 
 	# 2. Instantiate a PathFollow2D wrapper
 	var path_follower = PathFollow2D.new()
@@ -39,7 +38,8 @@ func spawn_wave_enemy() -> void:
 	
 	# 3. Instantiate the enemy unit and attach it to the follower wrapper
 	var enemy_instance = enemy_scene.instantiate() 
-	path_follower.add_child(enemy_instance)
+	print("[EnemySpawner] Instantiated enemy: ", enemy_instance)
+	path_follower.add_child(enemy_instance); 
 	
 	# 4. Attach the wrapper to the path
 	square_path.add_child(path_follower)
@@ -53,8 +53,10 @@ func spawn_wave_enemy() -> void:
 	
 	if enemy_instance.has_signal("tree_exited"):
 		enemy_instance.tree_exited.connect(_on_enemy_tree_exited.bind(enemy_instance))
+		
+	return enemy_instance
 
-func _spawn_enemy_manual_square() -> void:
+func _spawn_enemy_manual_square() -> Node2D:
 	# Try to use Path2D first, fall back to true manual movement
 	var square_path = square_path_node
 	
@@ -65,7 +67,7 @@ func _spawn_enemy_manual_square() -> void:
 		path_follower.loop = true
 		
 		var enemy_instance = enemy_scene.instantiate()
-		path_follower.add_child(enemy_instance)
+		path_follower.add_child(enemy_instance); 
 		square_path.add_child(path_follower)
 		
 		if enemy_instance.has_method("initialize_path_movement"):
@@ -76,6 +78,8 @@ func _spawn_enemy_manual_square() -> void:
 		
 		if enemy_instance.has_signal("tree_exited"):
 			enemy_instance.tree_exited.connect(_on_enemy_tree_exited.bind(enemy_instance))
+			
+		return enemy_instance
 	else:
 		# True manual square corner movement fallback - spawn at path Point 0
 		var enemy_instance = enemy_scene.instantiate()
@@ -92,8 +96,10 @@ func _spawn_enemy_manual_square() -> void:
 		
 		if enemy_instance.has_signal("tree_exited"):
 			enemy_instance.tree_exited.connect(_on_enemy_tree_exited.bind(enemy_instance))
+			
+		return enemy_instance
 
-func _spawn_mock_manual_square() -> void:
+func _spawn_mock_manual_square() -> Node2D:
 	# Try to use Path2D first, fall back to true manual movement
 	var square_path = square_path_node
 	
@@ -174,13 +180,13 @@ func take_damage(amount: float) -> void:
 		mock_enemy.initialize_path_movement(path_follower)
 		
 		active_enemies.append(mock_enemy)
-		print("👾 Fallback Target Spawned on path follower (Total: ", active_enemies.size(), "/50)")
 		
 		if mock_enemy.has_signal("destroyed"):
 			mock_enemy.destroyed.connect(_on_enemy_tree_exited.bind(mock_enemy))
 		
 		enemy_spawned.emit(active_enemies.size())
 		_sync_battle_manager_count()
+		return mock_enemy
 	else:
 		# True manual square corner movement fallback for mock enemies
 		var mock_enemy = Area2D.new()
@@ -219,10 +225,10 @@ signal destroyed()
 func _ready() -> void:
 	# Set initial path index based on spawn position
 	var corners = [
-		Vector2(center_pos.x, center_pos.y - square_size),
-		Vector2(center_pos.x + square_size, center_pos.y),
-		Vector2(center_pos.x, center_pos.y + square_size),
-		Vector2(center_pos.x - square_size, center_pos.y)
+		Vector2(134, 252),   # Top-Left
+		Vector2(965, 254),   # Top-Right
+		Vector2(962, 1480),  # Bottom-Right
+		Vector2(136, 1478)   # Bottom-Left
 	]
 	var closest_index = 0
 	var closest_dist = INF
@@ -235,10 +241,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var corners = [
-		Vector2(center_pos.x, center_pos.y - square_size),
-		Vector2(center_pos.x + square_size, center_pos.y),
-		Vector2(center_pos.x, center_pos.y + square_size),
-		Vector2(center_pos.x - square_size, center_pos.y)
+		Vector2(134, 252),   # Top-Left
+		Vector2(965, 254),   # Top-Right
+		Vector2(962, 1480),  # Bottom-Right
+		Vector2(136, 1478)   # Bottom-Left
 	]
 	var target_corner = corners[path_index]
 	var direction = (target_corner - global_position).normalized()
@@ -265,19 +271,18 @@ func take_damage(amount: float) -> void:
 			add_child(mock_enemy)
 		
 		active_enemies.append(mock_enemy)
-		print("👾 Fallback Target Spawned (manual square) at: ", mock_enemy.position, " (Total: ", active_enemies.size(), "/50)")
 		
 		if mock_enemy.has_signal("destroyed"):
 			mock_enemy.destroyed.connect(_on_enemy_tree_exited.bind(mock_enemy))
 		
 		enemy_spawned.emit(active_enemies.size())
 		_sync_battle_manager_count()
+		return mock_enemy
 
-func _fallback_mock_spawn() -> void:
+func _fallback_mock_spawn() -> Node2D:
 	# 1. Fetch our visual path via injected reference
 	var square_path = square_path_node
 	if not square_path:
-		print("⚠ [EnemySpawner] square_path_node not set - falling back to mock manual spawn")
 		_spawn_mock_manual_square()
 		return
 	# 2. Instantiate a PathFollow2D wrapper
@@ -356,7 +361,6 @@ func take_damage(amount: float) -> void:
 	mock_enemy.initialize_path_movement(path_follower)
 	
 	active_enemies.append(mock_enemy)
-	print("👾 Fallback Target Spawned on path follower (Total: ", active_enemies.size(), "/50)")
 	
 	# Connect destroyed signal for proper cleanup
 	if mock_enemy.has_signal("destroyed"):
@@ -364,6 +368,7 @@ func take_damage(amount: float) -> void:
 	
 	enemy_spawned.emit(active_enemies.size())
 	_sync_battle_manager_count()
+	return mock_enemy
 
 func _on_enemy_tree_exited(enemy_node: Node2D) -> void:
 	if enemy_node in active_enemies:

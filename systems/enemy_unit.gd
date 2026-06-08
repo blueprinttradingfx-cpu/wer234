@@ -81,10 +81,10 @@ func _ready() -> void:
 	
 	# Set initial path index for manual square movement
 	var corners = [
-		Vector2(path_center.x, path_center.y - square_size),
-		Vector2(path_center.x + square_size, path_center.y),
-		Vector2(path_center.x, path_center.y + square_size),
-		Vector2(path_center.x - square_size, path_center.y)
+		Vector2(134, 252),   # Top-Left
+		Vector2(965, 254),   # Top-Right
+		Vector2(962, 1480),  # Bottom-Right
+		Vector2(136, 1478)   # Bottom-Left
 	]
 	var closest_index = 0
 	var closest_dist = INF
@@ -144,10 +144,10 @@ func _move_toward_target(delta: float) -> void:
 	var speed = base_speed * speed_modifier
 	
 	var corners = [
-		Vector2(path_center.x, path_center.y - square_size),
-		Vector2(path_center.x + square_size, path_center.y),
-		Vector2(path_center.x, path_center.y + square_size),
-		Vector2(path_center.x - square_size, path_center.y)
+		Vector2(134, 252),   # Top-Left
+		Vector2(965, 254),   # Top-Right
+		Vector2(962, 1480),  # Bottom-Right
+		Vector2(136, 1478)   # Bottom-Left
 	]
 	
 	var target_corner = corners[path_index]
@@ -296,8 +296,6 @@ func take_damage(amount: float) -> void:
 		actual_damage = amount
 
 	current_hp -= actual_damage
-	# Log damage for diagnostics
-	print("[EnemyUnit] DAMAGE: %.1f dmg, shield broke: %s, hp: %.1f -> %.1f" % [actual_damage, current_shield_hp == 0, current_hp + actual_damage, current_hp])
 	if current_hp <= 0:
 		execute_destruction()
 

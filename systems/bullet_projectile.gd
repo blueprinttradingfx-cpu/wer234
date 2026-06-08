@@ -24,20 +24,17 @@ func initialize(start_pos: Vector2, target: Node2D, dmg: float) -> void:
 	damage_value = dmg
 	frames_since_init = 0
 	if is_instance_valid(target):
-		var target_pos = target.global_position
+		var target_pos = target_node.global_position
 		direction_vector = (target_pos - start_pos).normalized()
-		var distance = start_pos.distance_to(target_pos)
-		print("[BulletProjectile] Init - Spawn: ", start_pos, " Target: ", target_pos, " Distance: ", distance)
 	else:
 		# No valid target - bullet will travel straight up (shouldn't happen with fixed weapon system)
 		direction_vector = Vector2.UP
-		print("[BulletProjectile] Init - No valid target, going UP")
 
 func _physics_process(delta: float) -> void:
 	frames_since_init += 1
 	
 	# If the unit moves or shifts positions, actively track it down
-	if is_instance_valid(target_node):
+	if is_instance_valid(target_node) and target_node.is_inside_tree() and target_node.is_in_group("enemies"):
 		target_became_invalid = false  # Reset flag while target is valid
 		var target_pos = target_node.global_position
 		direction_vector = (target_pos - global_position).normalized()
@@ -53,7 +50,6 @@ func _physics_process(delta: float) -> void:
 		# Target was destroyed or became invalid - try to acquire new nearest target
 		if not target_became_invalid:
 			target_became_invalid = true
-			print("[BulletProjectile] Target destroyed, re-acquiring nearest enemy")
 			
 			# Find nearest enemy
 			var enemies = get_tree().get_nodes_in_group("enemies")
@@ -70,9 +66,9 @@ func _physics_process(delta: float) -> void:
 			if nearest_enemy:
 				target_node = nearest_enemy
 				target_became_invalid = false  # Reset since we have a new target
-				print("[BulletProjectile] Re-acquired target: ", nearest_enemy.name, " at distance: ", nearest_distance)
+				print("[BulletProjectile] Re-acquired target: %s at %s" % [nearest_enemy.name, nearest_enemy.global_position])
 			else:
-				print("[BulletProjectile] No enemies available to re-acquire")
+				print("[BulletProjectile] No valid enemies to re-acquire. Curving lost.")
 	
 	global_position += direction_vector * speed * delta
 	
@@ -82,8 +78,9 @@ func _physics_process(delta: float) -> void:
 	# Check if bullet has traveled too far without hitting
 	var distance_traveled = global_position.distance_to(spawn_pos)
 	if distance_traveled > max_distance:
-		var target_name = target_node.name if is_instance_valid(target_node) else "UNKNOWN"
-		print("[BulletProjectile] ATTACK MISSED - Max distance exceeded (%.1f/%.1f units). Target: '%s'" % [distance_traveled, max_distance, target_name])
+		var target_pos = target_node.global_position if is_instance_valid(target_node) else Vector2.ZERO
+		var target_name = target_node.name if is_instance_valid(target_node) else "NONE"
+		print("[BulletProjectile] MISS (Max Distance) - Bullet at %s, Target %s was at %s. Distance traveled: %.1f" % [global_position, target_name, target_pos, distance_traveled])
 		queue_free()
 		return
 
@@ -92,7 +89,6 @@ func _physics_process(delta: float) -> void:
 	var overlapped_bodies = get_overlapping_bodies()
 	for body in overlapped_bodies:
 		if is_instance_valid(body) and body.is_in_group("enemies") and body.has_method("take_damage"):
-			print("[BulletProjectile] Overlap hit (body): %s -> dealing %.2f" % [body.name, damage_value])
 			body.take_damage(damage_value)
 			queue_free()
 			return
@@ -100,7 +96,6 @@ func _physics_process(delta: float) -> void:
 	var overlapped_areas = get_overlapping_areas()
 	for area in overlapped_areas:
 		if is_instance_valid(area) and area.is_in_group("enemies") and area.has_method("take_damage"):
-			print("[BulletProjectile] Overlap hit (area): %s -> dealing %.2f" % [area.name, damage_value])
 			area.take_damage(damage_value)
 			queue_free()
 			return
@@ -123,7 +118,7 @@ func _on_area_entered(area: Area2D) -> void:
 
 func _on_lifetime_expired() -> void:
 	# Bullet timed out without hitting anything
-	var target_name = target_node.name if is_instance_valid(target_node) else "UNKNOWN"
-	var distance_traveled = global_position.distance_to(spawn_pos)
-	print("[BulletProjectile] ATTACK MISSED - Lifetime expired (%.1fs) without hitting target '%s'. Traveled %.1f units." % [lifetime, target_name, distance_traveled])
+	var target_pos = target_node.global_position if is_instance_valid(target_node) else Vector2.ZERO
+	var target_name = target_node.name if is_instance_valid(target_node) else "NONE"
+	print("[BulletProjectile] MISS (Lifetime Expired) - Bullet at %s, Target %s was at %s." % [global_position, target_name, target_pos])
 	queue_free()

@@ -5,91 +5,331 @@ Vulkan 1.4.323 - Forward Mobile - Using Device #0: Intel - Intel(R) Iris(R) Xe G
 [ProgressionManager] Robot data validated successfully.
 Progression Databases initialized successfully.
 🚀 EnemySpawner node not found in scene tree. Creating dynamically...
+✅ [EnemySpawner] square_path_node injected: /root/MainGameScene/ArenaContainer/Viewport/GameplayArena/SquarePath
 [MECHA STATE]: Systems operational. Weapons online.
-[WeaponSystem] ATTACK MISSED - No enemies available to target
-👾 Fallback Target Spawned (manual square) at: (867.0295, 314.22) (Total: 1/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (844.2014, 331.3765) Distance: 1141.92907714844
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (799.3778, 365.0635) Distance: 1097.06384277344
-👾 Fallback Target Spawned (manual square) at: (815.9075, 293.8536) (Total: 2/50)
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @Area2D@24 at distance: 1039.10827636719
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-43.39027, 182.1485) Distance: 1358.25158691406
-👾 Fallback Target Spawned (manual square) at: (825.1772, 420.4586) (Total: 1/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-27.52692, 192.4229) Distance: 1342.45336914063
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @CharacterBody2D@26 at distance: 755.245971679688
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (605.2715, -4.627151) Distance: 1430.86950683594
-👾 Fallback Target Spawned (manual square) at: (768.4147, 297.7371) (Total: 2/50)
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (603.1006, 14.14782) Distance: 1411.99133300781
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @Area2D@40 at distance: 534.161743164063
-👾 Fallback Target Spawned (manual square) at: (832.9487, 291.9439) (Total: 3/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-35.29013, 264.4478) Distance: 1280.03698730469
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-18.47889, 273.0846) Distance: 1265.12426757813
-👾 Fallback Target Spawned (manual square) at: (898.1997, 389.4867) (Total: 3/50)
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @CharacterBody2D@57 at distance: 416.441497802734
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (329.7673, 0.861132) Distance: 1433.38879394531
-👾 Fallback Target Spawned (manual square) at: (867.7049, 301.5221) (Total: 4/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-45.21121, 226.3319) Distance: 1318.77380371094
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-28.79251, 235.6933) Distance: 1303.42541503906
-👾 Fallback Target Spawned (manual square) at: (862.1165, 440.5232) (Total: 5/50)
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @CharacterBody2D@50 at distance: 397.057891845703
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (311.6657, -9.795475) Distance: 1446.32080078125
-👾 Fallback Target Spawned (manual square) at: (886.9813, 370.0435) (Total: 6/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (318.6962, 7.748316) Distance: 1427.98913574219
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @Area2D@44 at distance: 406.087768554688
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-39.70353, 78.28004) Distance: 1452.35925292969
-👾 Fallback Target Spawned (manual square) at: (903.3326, 326.0608) (Total: 6/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-25.16731, 90.35932) Distance: 1435.7109375
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @CharacterBody2D@101 at distance: 395.940368652344
-👾 Fallback Target Spawned (manual square) at: (743.8691, 308.1334) (Total: 7/50)
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (501.1217, 68.54207) Distance: 1354.48083496094
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-47.6436, 38.68236) Distance: 1492.04138183594
-👾 Fallback Target Spawned (manual square) at: (790.3179, 376.736) (Total: 8/50)
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-33.5052, 51.22499) Distance: 1475.15368652344
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-👾 Fallback Target Spawned (manual square) at: (837.6351, 442.2492) (Total: 9/50)
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @CharacterBody2D@103 at distance: 399.496429443359
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-17.02373, 149.8865) Distance: 1377.50463867188
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (-1.803931, 161.0922) Distance: 1361.37133789063
-👾 Fallback Target Spawned (manual square) at: (755.9785, 360.9715) (Total: 10/50)
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @Area2D@69 at distance: 492.925170898438
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (220.719, -40.26627) Distance: 1491.39331054688
-👾 Fallback Target Spawned (manual square) at: (824.3782, 438.0575) (Total: 9/50)
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (229.5945, -23.57986) Distance: 1473.31628417969
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Target destroyed, re-acquiring nearest enemy
-[BulletProjectile] Re-acquired target: @Area2D@90 at distance: 382.308288574219
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (447.3935, 64.56585) Distance: 1359.83044433594
-👾 Fallback Target Spawned (manual square) at: (807.2499, 295.1757) (Total: 9/50)
-🚀 [MISSILE LAUNCH] Firing 5 missiles at targets
-🚀 [MISSILE IMPACT] 5 missiles dealing 10.0 damage each
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-[BulletProjectile] Init - Spawn: (509.0, 1423.0) Target: (58.13096, -50.0) Distance: 1540.45837402344
-[EnemyUnit] DAMAGE: 10.0 dmg, shield broke: true, hp: 10.0 -> 0.0
-👾 Fallback Target Spawned (manual square) at: (816.7469, 284.5116) (Total: 10/50)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#42328917621>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#43117446783>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#43285218947>
+[BulletProjectile] Re-acquired target: EnemyUnit at (142.7429, 252.0211)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#43654317685>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#44023416429>
+[BulletProjectile] Re-acquired target: EnemyUnit at (137.833, 252.0092)
+[BulletProjectile] Re-acquired target: EnemyUnit at (137.833, 252.0092)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#44811945603>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#46120568486>
+[BulletProjectile] Re-acquired target: EnemyUnit at (136.36, 252.0057)
+[BulletProjectile] Re-acquired target: EnemyUnit at (136.36, 252.0057)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#46321895021>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#46489667179>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#46724548232>
+[BulletProjectile] Re-acquired target: EnemyUnit at (140.2597, 252.0151)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#47580186263>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#47664072345>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#47747958440>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#48083502738>
+[BulletProjectile] Re-acquired target: EnemyUnit at (139.4891, 252.0132)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#48184166026>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#48268052090>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#48620373655>
+[BulletProjectile] Re-acquired target: EnemyUnit at (142.7429, 252.0211)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#48704259752>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49023026794>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49106912921>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49442457198>
+[BulletProjectile] Re-acquired target: EnemyUnit at (144.344, 252.0249)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49526343290>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49610229351>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49677338221>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#49761224341>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#50096768643>
+[BulletProjectile] Re-acquired target: EnemyUnit at (145.0563, 252.0266)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#50197431914>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#50281318007>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#50616862333>
+[BulletProjectile] Re-acquired target: EnemyUnit at (143.4851, 252.0228)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#50700748437>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#50801411742>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#51136956074>
+[BulletProjectile] Re-acquired target: EnemyUnit at (142.7429, 252.0211)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#51455723160>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#51522831986>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#51606718078>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#51690604189>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52042925735>
+[BulletProjectile] Re-acquired target: EnemyUnit at (145.8094, 252.0284)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52126811818>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52210697865>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52277806696>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52630128236>
+[BulletProjectile] Re-acquired target: EnemyUnit at (144.344, 252.0249)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52714014378>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52814677621>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#52881786489>
+[BulletProjectile] Re-acquired target: EnemyUnit at (143.4851, 252.0228)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#53234108012>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#53334771325>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#53653538415>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#53989082766>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54056191660>
+[BulletProjectile] Re-acquired target: EnemyUnit at (141.9476, 252.0191)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54140077689>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54223963799>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54307849857>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54643394215>
+[BulletProjectile] Re-acquired target: EnemyUnit at (145.0563, 252.0266)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54727280249>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54811166368>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#54895052420>
+[BulletProjectile] Re-acquired target: EnemyUnit at (145.0563, 252.0266)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#55264151191>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#55348037229>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#55431923326>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#55767467645>
+[BulletProjectile] Re-acquired target: EnemyUnit at (140.2597, 252.0151)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56086234777>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56170120788>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56254006887>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56589551226>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56656660133>
+[BulletProjectile] Re-acquired target: EnemyUnit at (142.7429, 252.0211)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56740546173>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56841209493>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#56925095563>
+[BulletProjectile] Re-acquired target: EnemyUnit at (145.0563, 252.0266)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#57277417082>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#57344525980>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#57445189281>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#57780733576>
+[BulletProjectile] Re-acquired target: EnemyUnit at (141.0995, 252.0171)
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#57881396866>
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#57948505747>
+🚀 [MISSILE LAUNCH] Firing 4 missiles at targets
+🚀 [MISSILE IMPACT] 4 missiles dealing 10.0 damage each
+[BattleManager] \_spawn_enemy called. custom_spawner is: EnemySpawner:<Node2D#36305897021>
+[BattleManager] Calling custom_spawner.spawn_wave_enemy()
+[EnemySpawner] spawn_wave_enemy called
+[EnemySpawner] Instantiated enemy: EnemyUnit:<CharacterBody2D#58267272862>
+[BulletProjectile] Re-acquired target: EnemyUnit at (134.5912, 252.0014)
 --- Debugging process stopped ---

@@ -25,6 +25,8 @@ var boss_active: bool = false
 var shield_points: int = 0
 var credit_gain_multiplier: float = 1.0
 
+var custom_spawner: Node = null
+
 @export var current_wave_enemy_scene: PackedScene
 
 var _stage_timer: Timer
@@ -103,11 +105,7 @@ func _on_spawn_timer_timeout() -> void:
 	
 	# Spawn enemies based on wave configuration
 	var enemies_to_spawn = _get_enemies_for_wave(current_wave)
-	for i in range(enemies_to_spawn):
-		_spawn_enemy()
-		alive_enemy_count += 1
-	
-	enemy_count_changed.emit(alive_enemy_count)
+	_staggered_spawn(enemies_to_spawn)
 	
 	if alive_enemy_count >= max_heart_limit:
 		_handle_defeat("Overflow Limit Reached")
@@ -152,6 +150,17 @@ func _check_wave_milestones() -> void:
 		print("[BattleManager] Wave 75 milestone reached - pre-boss surge")
 		# Could add enemy surge or special composition
 
+func _staggered_spawn(count: int) -> void:
+	for i in range(count):
+		# We use get_tree().create_timer to add a 0.2 second delay between each enemy in the wave
+		# so they form a line on the path instead of a single perfect stack
+		get_tree().create_timer(i * 0.25).timeout.connect(func():
+			if battle_state == BattleState.ACTIVE:
+				_spawn_enemy()
+				alive_enemy_count += 1
+				enemy_count_changed.emit(alive_enemy_count)
+		)
+
 func skip_waves(waves_to_skip: int) -> void:
 	if battle_state != BattleState.ACTIVE:
 		return
@@ -174,6 +183,28 @@ func skip_waves(waves_to_skip: int) -> void:
 	print("[BattleManager] Skipped to wave %d with reward multiplier %d" % [target_wave, skip_multiplier])
 
 func _spawn_enemy() -> void:
+	print("[BattleManager] _spawn_enemy called. custom_spawner is: ", custom_spawner)
+	if is_instance_valid(custom_spawner) and custom_spawner.has_method("spawn_wave_enemy"):
+		print("[BattleManager] Calling custom_spawner.spawn_wave_enemy()")
+		var spawned_enemy = custom_spawner.spawn_wave_enemy()
+		if not spawned_enemy:
+			print("[BattleManager] spawn_wave_enemy returned null. Returning.")
+			return # Capacity reached
+		
+		# Apply stage configuration
+		if not current_stage_config.is_empty() and spawned_enemy.has_method("set_speed_modifier"):
+			var enemy_hp = current_stage_config.get("enemy_hp", 10.0)
+			var velocity_mod = current_stage_config.get("velocity_modifier", 1.0)
+			
+			spawned_enemy.set("max_hp", enemy_hp)
+			spawned_enemy.set("current_hp", enemy_hp)
+			spawned_enemy.set_speed_modifier(velocity_mod)
+			
+		if spawned_enemy.has_signal("destroyed"):
+			spawned_enemy.destroyed.connect(_on_enemy_destroyed)
+		return
+
+	print("[BattleManager] Falling back to manual load!")
 	var enemy_scene = load("res://systems/enemy_unit.tscn")
 	if not enemy_scene:
 		push_error("[BattleManager] Failed to load enemy_unit.tscn")
@@ -188,7 +219,8 @@ func _spawn_enemy() -> void:
 		
 		enemy.max_hp = enemy_hp
 		enemy.current_hp = enemy_hp
-		enemy.set_speed_modifier(velocity_mod)
+		if enemy.has_method("set_speed_modifier"):
+			enemy.set_speed_modifier(velocity_mod)
 	
 	# Spawn at random edge position
 	var spawn_pos = _get_random_spawn_position()
@@ -198,7 +230,8 @@ func _spawn_enemy() -> void:
 	get_tree().current_scene.add_child(enemy)
 	
 	# Connect to destroyed signal for proper cleanup
-	enemy.destroyed.connect(_on_enemy_destroyed)
+	if enemy.has_signal("destroyed"):
+		enemy.destroyed.connect(_on_enemy_destroyed)
 
 func _get_random_spawn_position() -> Vector2:
 	var viewport = get_viewport()

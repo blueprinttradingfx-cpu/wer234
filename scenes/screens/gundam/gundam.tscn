@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bn3s3tnrq6mvo" path="res://assets/ui/Rmouth.png" id="4_axn6p"]
 
 [node name="GundamMecha" type="Node2D" unique_id=345964155]
-position = Vector2(509, 1423)
+position = Vector2(518, 995)
 script = ExtResource("1_vbpaa")
 base_emotion = 2
 
