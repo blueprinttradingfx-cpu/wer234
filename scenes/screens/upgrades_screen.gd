@@ -1,121 +1,134 @@
 extends Control
-class_name UpgradesScreen
 
-# --- @onready - plain nodes (%) ---
+@onready var gold_label: Label = %GoldLabel
+@onready var diamond_label: Label = %DiamondLabel
 @onready var back_button: Button = %BackButton
-@onready var credits_label: Label = %CreditsLabel
-@onready var ballistic_core: PanelContainer = %BallisticCore
-@onready var energy_matrix: PanelContainer = %EnergyMatrix
-@onready var tactician_protocol: PanelContainer = %TacticianProtocol
+@onready var close_button: Button = %CloseButton
+@onready var upgrade_items_list: VBoxContainer = %UpgradeItemsList
 
-# --- VARIABLES ---
-var save_system = null
-var game_state = null
-var tech_credits: int = 0
+const ROW_ITEM_SCENE = preload("res://scenes/common/upgrade_row_item.tscn")
+const POWERUP_ATLAS = preload("res://assets/ui/powerups.png")
 
-# Upgrade levels tracked via SaveSystem dictionary structures
-var chassis_calibrator_level: int = 0
-var multi_shot_loader_level: int = 0
-var processor_overclock_level: int = 0
-var payload_expansion_level: int = 0
-var piercing_barrel_level: int = 0
-var emp_grid_level: int = 0
+# Database definitions mirroring main_gundam_scene keys
+var upgrades_database: Dictionary = {
+	"chassis_calibrator": {
+		"category": "ballistic_core",
+		"key": "chassis_calibrator_level",
+		"title": "Chassis Calibrator",
+		"desc": "Increases Mecha base attack speed configuration (+5% per level)",
+		"max_level": 10,
+		"base_cost": 250,
+		"cost_multiplier": 1.5,
+		"atlas_region": Rect2(50, 70, 292, 292)
+	},
+	"piercing_barrel": {
+		"category": "ballistic_core",
+		"key": "piercing_barrel_level",
+		"title": "Piercing Barrel",
+		"desc": "Enables primary ammunition projectiles to cut through targets",
+		"max_level": 1,
+		"base_cost": 1000,
+		"cost_multiplier": 1.0,
+		"atlas_region": Rect2(376, 70, 292, 292)
+	},
+	"multi_shot_loader": {
+		"category": "ballistic_core",
+		"key": "multi_shot_loader_level",
+		"title": "Multi-Shot Loader",
+		"desc": "Splits frontal munitions fires into multi-projectile spreads",
+		"max_level": 2,
+		"base_cost": 750,
+		"cost_multiplier": 2.0,
+		"atlas_region": Rect2(1035, 70, 292, 292)
+	}
+}
 
 func _ready() -> void:
-	save_system = get_node_or_null("/root/SaveSystem")
-	game_state = get_node_or_null("/root/GameState")
+	back_button.pressed.connect(_on_back_pressed)
+	close_button.pressed.connect(_on_back_pressed)
 	
-	if back_button:
-		back_button.pressed.connect(_on_back_pressed)
-		
-	_load_upgrade_data()
-	_build_upgrade_ui()
+	_update_currency_display()
+	_populate_upgrade_list()
 
-func _load_upgrade_data() -> void:
-	if save_system:
-		# Sync currency and levels directly from the verified SaveSystem autoload
-		tech_credits = save_system.get_tech_credits()
-		
-		chassis_calibrator_level = save_system.get_upgrade_level("ballistic_core", "chassis_calibrator_level")
-		multi_shot_loader_level = save_system.get_upgrade_level("ballistic_core", "multi_shot_loader_level")
-		processor_overclock_level = save_system.get_upgrade_level("energy_matrix", "processor_overclock_level")
-		payload_expansion_level = save_system.get_upgrade_level("energy_matrix", "payload_expansion_level")
-		piercing_barrel_level = save_system.get_upgrade_level("ballistic_core", "piercing_barrel_level")
-		emp_grid_level = save_system.get_upgrade_level("tactician_protocol", "emp_grid_level")
-		
-	if credits_label:
-		credits_label.text = "Tech Credits: %d" % tech_credits
+func _update_currency_display() -> void:
+	var ss = get_node_or_null("/root/SaveSystem")
+	if ss and ss.has_method("get_tech_credits"):
+		gold_label.text = "💰 " + str(ss.get_tech_credits()) 
 
-func _build_upgrade_ui() -> void:
-	if credits_label:
-		credits_label.text = "Tech Credits: %d" % tech_credits
-		
-	_populate_module_list(ballistic_core, "Ballistic Core", [
-		{"id": "chassis_calibrator", "name": "Chassis Calibrator", "level": chassis_calibrator_level, "max": 10, "base_cost": 100},
-		{"id": "multi_shot_loader", "name": "Multi-Shot Loader", "level": multi_shot_loader_level, "max": 5, "base_cost": 250},
-		{"id": "piercing_barrel", "name": "Piercing Rail Barrel", "level": piercing_barrel_level, "max": 2, "base_cost": 500}
-	], "ballistic_core")
-
-	_populate_module_list(energy_matrix, "Energy Matrix", [
-		{"id": "processor_overclock", "name": "Processor Overclock", "level": processor_overclock_level, "max": 10, "base_cost": 120},
-		{"id": "payload_expansion", "name": "Payload Expansion", "level": payload_expansion_level, "max": 10, "base_cost": 150}
-	], "energy_matrix")
-
-	_populate_module_list(tactician_protocol, "Tactician Protocol", [
-		{"id": "emp_grid", "name": "EMP Disruption Grid", "level": emp_grid_level, "max": 5, "base_cost": 400}
-	], "tactician_protocol")
-
-func _populate_module_list(container: PanelContainer, module_title: String, upgrades: Array, module_key: String) -> void:
-	if not container: return
-	
-	for child in container.get_children():
+func _populate_upgrade_list() -> void:
+	# Clean out existing items
+	for child in upgrade_items_list.get_children():
 		child.queue_free()
 		
-	var vbox = VBoxContainer.new()
-	container.add_child(vbox)
+	var ss = get_node_or_null("/root/SaveSystem")
 	
-	var title = Label.new()
-	title.text = "--- %s ---" % module_title.to_upper()
-	vbox.add_child(title)
-	
-	for upgrade in upgrades:
-		var hbox = HBoxContainer.new()
-		var current_lvl: int = upgrade["level"]
-		var max_lvl: int = upgrade["max"]
-		var cost: int = upgrade["base_cost"] * (current_lvl + 1)
-		var upgrade_id: String = upgrade["id"]
+	for internal_id in upgrades_database:
+		var data = upgrades_database[internal_id]
+		var current_lvl = 0
 		
-		var info_label = Label.new()
-		info_label.text = "%s (Lvl %d/%d)" % [upgrade["name"], current_lvl, max_lvl]
-		info_label.size_flags_horizontal = SIZE_EXPAND_FILL
-		hbox.add_child(info_label)
-		
-		var buy_button = Button.new()
-		if current_lvl >= max_lvl:
-			buy_button.text = "MAXED"
-			buy_button.disabled = true
-		else:
-			buy_button.text = "Upgrade (%d 🪙)" % cost
-			buy_button.disabled = (tech_credits < cost)
-			# Safe binding pattern: passes pure arguments cleanly to a helper method
-			buy_button.pressed.connect(_on_upgrade_purchased.bind(module_key, upgrade_id + "_level", current_lvl + 1, cost))
+		if ss and ss.has_method("get_upgrade_level"):
+			current_lvl = ss.get_upgrade_level(data["category"], data["key"])
 			
-		hbox.add_child(buy_button)
-		vbox.add_child(hbox)
+		var row_instance = ROW_ITEM_SCENE.instantiate()
+		upgrade_items_list.add_child(row_instance)
+		
+		# Set up UI text elements
+		row_instance.get_node("%TitleLabel").text = data["title"]
+		row_instance.get_node("%DescLabel").text = data["desc"]
+		row_instance.get_node("%LevelLabel").text = "LVL: %d / %d" % [current_lvl, data["max_level"]]
+		
+		# Set up the AtlasTexture icon
+		var texture_rect: TextureRect = row_instance.get_node("%Icon")
+		var atlas_tex = AtlasTexture.new()
+		atlas_tex.atlas = POWERUP_ATLAS
+		atlas_tex.region = data["atlas_region"]
+		texture_rect.texture = atlas_tex
+		
+		# Calculate dynamic upgrade price
+		var btn: Button = row_instance.get_node("%UpgradeButton")
+		if current_lvl >= data["max_level"]:
+			btn.text = "MAXED"
+			btn.disabled = true
+		else:
+			var cost = int(data["base_cost"] * (data["cost_multiplier"] ** current_lvl))
+			btn.text = "%d CC" % cost
+			btn.disabled = false
+			btn.pressed.connect(_on_upgrade_triggered.bind(internal_id, cost))
 
-func _on_upgrade_purchased(module: String, upgrade_key: String, next_level: int, cost: int) -> void:
-	if not save_system: return
+func _on_upgrade_triggered(internal_id: String, cost: int) -> void:
+	var ss = get_node_or_null("/root/SaveSystem")
+	if not ss:
+		return
+		
+	var current_credits = 0
+	if ss.has_method("get_tech_credits"):
+		current_credits = ss.get_tech_credits()
+		
+	if current_credits < cost:
+		print("❌ Insufficient tech credits!")
+		return
+		
+	var data = upgrades_database[internal_id]
+	var current_lvl = 0
+	if ss.has_method("get_upgrade_level"):
+		current_lvl = ss.get_upgrade_level(data["category"], data["key"])
 	
-	if tech_credits >= cost:
-		if save_system.has_method("deduct_tech_credits"):
-			save_system.deduct_tech_credits(cost)
+	if current_lvl < data["max_level"]:
+		# Deduct credits safely based on your SaveSystem API
+		if ss.has_method("change_tech_credits"):
+			ss.change_tech_credits(-cost)
+		elif ss.has_method("set_tech_credits"):
+			ss.set_tech_credits(current_credits - cost)
+			
+		# Increment and save the new level
+		if ss.has_method("set_upgrade_level"):
+			ss.set_upgrade_level(data["category"], data["key"], current_lvl + 1)
 		
-		save_system.set_upgrade_level(module, upgrade_key, next_level)
-		
-		# Instantly update values and refresh the menus
-		_load_upgrade_data()
-		_build_upgrade_ui()
+		# Refresh the UI to reflect changes
+		_update_currency_display()
+		_populate_upgrade_list()
+	else:
+		print("⚠️ This upgrade is already at maximum level!")
 
 func _on_back_pressed() -> void:
-	if game_state:
-		game_state.transition_to_screen(game_state.Screen.MENU)
+	get_tree().change_scene_to_file("res://scenes/screens/main_gundam/main_gundam_scene.tscn")

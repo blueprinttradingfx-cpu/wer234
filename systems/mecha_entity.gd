@@ -24,9 +24,9 @@ var missile_cooldown_remaining: float = 0.0
 func _ready() -> void:
 	progression_manager = get_node_or_null("/root/ProgressionManager")
 	
-	# Setup missile cooldown timer
+	# Setup missile cooldown timer (with safe default)
 	missile_timer = Timer.new()
-	missile_timer.wait_time = missile_cooldown
+	missile_timer.wait_time = 10.0  # Safe default until stats are loaded
 	missile_timer.timeout.connect(Callable(self, "_on_missile_cooldown_complete"))
 	add_child(missile_timer)
 	

@@ -1,82 +1,81 @@
 extends Control
-class_name HangarScreen
-
-signal mecha_selected(mecha_id: String)
 
 @onready var back_button: Button = %BackButton
-@onready var mecha_grid: GridContainer = %MechaGrid
+@onready var close_button: Button = %CloseButton
+@onready var mecha_name_label: Label = %MechaNameLabel
+@onready var mecha_texture: TextureRect = %MechaTexture
+@onready var atk_label: Label = %AtkLabel
+@onready var hp_label: Label = %HpLabel
+@onready var equipment_grid: HFlowContainer = %EquipmentGrid
 
-var progression_manager = null
-var game_state = null
-var save_system = null
-var available_mechas: Array = []
-var active_mecha_id: String = ""
+const CARD_ITEM_SCENE = preload("res://scenes/common/shop_item_card.tscn")
+
+# Mock database of items currently owned by the user profile
+var inventory_items: Dictionary = {
+	"wpn_beam_rifle": {"title": "Beam Rifle", "type": "Weapon", "stat_bonus": "+40 ATK", "equipped": true},
+	"wpn_plasma_blade": {"title": "Plasma Blade", "type": "Weapon", "stat_bonus": "+60 ATK", "equipped": false},
+	"shd_graphene": {"title": "Graphene Shield", "type": "Armor", "stat_bonus": "+300 HP", "equipped": true},
+	"core_overclock": {"title": "Overclock Core", "type": "Utility", "stat_bonus": "+15% Speed", "equipped": false}
+}
 
 func _ready() -> void:
-	progression_manager = get_node_or_null("/root/ProgressionManager")
-	game_state = get_node_or_null("/root/GameState")
-	save_system = get_node_or_null("/root/SaveSystem")
+	back_button.pressed.connect(_on_back_pressed)
+	close_button.pressed.connect(_on_back_pressed)
 	
-	if back_button:
-		back_button.pressed.connect(_on_back_pressed)
-		
-	_load_mechas()
+	_refresh_hangar_ui()
 
-func _load_mechas() -> void:
-	if not progression_manager:
-		return
+func _refresh_hangar_ui() -> void:
+	_calculate_and_render_stats()
+	_populate_equipment_list()
+
+func _calculate_and_render_stats() -> void:
+	var base_atk = 100
+	var base_hp = 1000
 	
-	available_mechas = progression_manager.get_available_mechas()
-	active_mecha_id = progression_manager.get_active_mecha_id()
-	
-	for child in mecha_grid.get_children():
+	for id in inventory_items:
+		var item = inventory_items[id]
+		if item["equipped"]:
+			if "ATK" in item["stat_bonus"]:
+				base_atk += int(item["stat_bonus"])
+			if "HP" in item["stat_bonus"]:
+				base_hp += int(item["stat_bonus"])
+				
+	atk_label.text = "COMBAT POWER: %d ATK" % base_atk
+	hp_label.text = "SURVIVABILITY: %d HP" % base_hp
+
+func _populate_equipment_list() -> void:
+	# Clear out old cards cleanly before re-rendering
+	for child in equipment_grid.get_children():
 		child.queue_free()
-	
-	for mecha_data in available_mechas:
-		_create_mecha_card(mecha_data)
-
-func _create_mecha_card(mecha_data: Dictionary) -> void:
-	var card_panel = PanelContainer.new()
-	card_panel.custom_minimum_size = Vector2(240, 320)
-	
-	var vbox = VBoxContainer.new()
-	card_panel.add_child(vbox)
-	
-	# Name display
-	var name_label = Label.new()
-	name_label.text = str(mecha_data.get("name", "Unknown Unit"))
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(name_label)
-	
-	# Select / Equip Button Logic
-	var mecha_id = mecha_data.get("mecha_id", "")
-	var is_unlocked = progression_manager.is_mecha_unlocked(mecha_id)
-	var is_active = (mecha_id == active_mecha_id)
-	
-	var select_button = Button.new()
-	if is_active:
-		select_button.text = "✓ ACTIVE"
-		select_button.disabled = true
-	elif is_unlocked:
-		select_button.text = "SELECT"
-		select_button.pressed.connect(_on_mecha_selected.bind(mecha_id))
-	else:
-		var unlock_req = mecha_data.get("unlock_requirement", {})
-		select_button.text = "LOCKED (Stage %d)" % unlock_req.get("value", 0)
-		select_button.disabled = true
 		
-	vbox.add_child(select_button)
-	mecha_grid.add_child(card_panel)
-
-func _on_mecha_selected(mecha_id: String) -> void:
-	if progression_manager:
-		progression_manager.set_active_mecha(mecha_id)
-	if save_system and save_system.has_method("set_active_mecha"):
-		save_system.set_active_mecha(mecha_id)
+	for id in inventory_items:
+		var item = inventory_items[id]
+		var card = CARD_ITEM_SCENE.instantiate()
+		equipment_grid.add_child(card)
 		
-	mecha_selected.emit(mecha_id)
-	_load_mechas() # Refresh display states instantly
+		card.get_node("%TitleLabel").text = item["title"]
+		card.get_node("%ValueLabel").text = item["stat_bonus"]
+		
+		var action_btn: Button = card.get_node("%BuyButton")
+		if item["equipped"]:
+			action_btn.text = "EQUIPPED"
+			action_btn.disabled = true
+		else:
+			action_btn.text = "EQUIP"
+			action_btn.disabled = false
+			action_btn.pressed.connect(_on_equip_item_triggered.bind(id))
+
+func _on_equip_item_triggered(item_id: String) -> void:
+	var target_type = inventory_items[item_id]["type"]
+	
+	# Auto un-equip other parts in the same slot
+	for id in inventory_items:
+		if inventory_items[id]["type"] == target_type:
+			inventory_items[id]["equipped"] = false
+			
+	inventory_items[item_id]["equipped"] = true
+	print("⚔️ Mounted hangar component component: ", item_id)
+	_refresh_hangar_ui()
 
 func _on_back_pressed() -> void:
-	if game_state:
-		game_state.transition_to_screen(game_state.Screen.MENU)
+	get_tree().change_scene_to_file("res://scenes/screens/main_gundam/main_gundam_scene.tscn")

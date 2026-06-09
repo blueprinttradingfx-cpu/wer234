@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://leaderboard_screen"]
+[gd_scene load_steps=3 format=3 uid="uid://b28pqp4v72k9"]
 
-[ext_resource type="Script" path="res://scenes/screens/leaderboard_screen.gd" id="1_leaderboard_screen"]
+[ext_resource type="Script" uid="uid://e1oskpbv2n5j" path="res://scenes/screens/leaderboard_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="2_bg"]
 
 [node name="LeaderboardScreen" type="Control"]
 layout_mode = 3
@@ -9,9 +10,20 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_leaderboard_screen")
+script = ExtResource("1_script")
 
-[node name="RootLayout" type="Control" parent="."]
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MainLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,101 +31,104 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SafeArea" type="Control" parent="RootLayout"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Header" type="PanelContainer" parent="MainLayout"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
 
-[node name="TopAppBar" type="Control" parent="RootLayout/SafeArea"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 64.0
-grow_horizontal = 2
+[node name="HeaderMargin" type="MarginContainer" parent="MainLayout/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
 
-[node name="TitleLabel" type="Label" parent="RootLayout/SafeArea/TopAppBar"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -70.0
-offset_top = -16.0
-offset_right = 70.0
-offset_bottom = 16.0
-text = "LEADERBOARD"
+[node name="HeaderLayout" type="HBoxContainer" parent="MainLayout/Header/HeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BackButton" type="Button" parent="MainLayout/Header/HeaderMargin/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "  ⬅  "
+
+[node name="ScreenTitle" type="Label" parent="MainLayout/Header/HeaderMargin/HeaderLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 42
+text = "GLOBAL RANKINGS"
+vertical_alignment = 1
+
+[node name="LeaderboardScroll" type="ScrollContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ScrollMargin" type="MarginContainer" parent="MainLayout/LeaderboardScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="LeaderboardList" type="VBoxContainer" parent="MainLayout/LeaderboardScroll/ScrollMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="PlayerRankPanel" type="PanelContainer" parent="MainLayout"]
+layout_mode = 2
+
+[node name="PlayerRankMargin" type="MarginContainer" parent="MainLayout/PlayerRankPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="PlayerRankLayout" type="HBoxContainer" parent="MainLayout/PlayerRankPanel/PlayerRankMargin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="MyRankLabel" type="Label" parent="MainLayout/PlayerRankPanel/PlayerRankMargin/PlayerRankLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
 theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
+text = "#99+"
 
-[node name="MainContent" type="Control" parent="RootLayout/SafeArea"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 64.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MyNameLabel" type="Label" parent="MainLayout/PlayerRankPanel/PlayerRankMargin/PlayerRankLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 32
+text = "PILOT (YOU)"
 
-[node name="LeaderboardContainer" type="VBoxContainer" parent="RootLayout/SafeArea/MainContent"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 20.0
-offset_bottom = 20.0
-theme_override_constants/separation = 10
+[node name="MyScoreLabel" type="Label" parent="MainLayout/PlayerRankPanel/PlayerRankMargin/PlayerRankLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "0 STAGES"
 
-[node name="HeaderRow" type="HBoxContainer" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer"]
-custom_minimum_size = Vector2(0, 40)
+[node name="Footer" type="PanelContainer" parent="MainLayout"]
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
-[node name="RankLabel" type="Label" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer/HeaderRow"]
-custom_minimum_size = Vector2(60, 0)
+[node name="FooterMargin" type="MarginContainer" parent="MainLayout/Footer"]
 layout_mode = 2
-text = "Rank"
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 
-[node name="PlayerLabel" type="Label" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer/HeaderRow"]
-custom_minimum_size = Vector2(200, 0)
+[node name="FooterLayout" type="HBoxContainer" parent="MainLayout/Footer/FooterMargin"]
 layout_mode = 2
-text = "Player"
-theme_override_font_sizes/font_size = 18
+alignment = 1
 
-[node name="ScoreLabel" type="Label" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer/HeaderRow"]
-custom_minimum_size = Vector2(100, 0)
+[node name="CloseButton" type="Button" parent="MainLayout/Footer/FooterMargin/FooterLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 100)
 layout_mode = 2
-text = "Score"
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 2
-
-[node name="Entry1" type="PanelContainer" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-
-[node name="Entry2" type="PanelContainer" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-
-[node name="Entry3" type="PanelContainer" parent="RootLayout/SafeArea/MainContent/LeaderboardContainer"]
-custom_minimum_size = Vector2(0, 50)
-layout_mode = 2
-
-[node name="BottomNav" type="Control" parent="RootLayout/SafeArea"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -80.0
-grow_horizontal = 2
-grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+text = "LAUNCH BATTLE"

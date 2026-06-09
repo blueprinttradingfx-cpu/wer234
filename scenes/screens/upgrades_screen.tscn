@@ -1,72 +1,112 @@
-[gd_scene format=3 uid="uid://upgrades_screen_scene"]
+[gd_scene format=3 uid="uid://deb7p453ta7s6"]
 
-[ext_resource type="Script" path="res://scenes/screens/upgrades_screen.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://dx454yf06ri50" path="res://scenes/screens/upgrades_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="2_bg"]
 
-[node name="UpgradesScreen" type="Control"]
+[node name="UpgradesScreen" type="Control" unique_id=748263904]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_main")
+script = ExtResource("1_script")
 
-[node name="BackButton" type="Button" parent="."]
-layout_mode = 2
-text = "Back"
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 20.0
-margin_top = 20.0
-margin_right = 220.0
-margin_bottom = 80.0
+[node name="Background" type="Sprite2D" parent="." unique_id=564902139]
+visible = false
+position = Vector2(540, 960)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("2_bg")
 
-[node name="CreditsLabel" type="Label" parent="."]
-layout_mode = 2
-text = "Tech Credits: 0"
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_left = 20.0
-margin_top = 100.0
-margin_right = 520.0
-margin_bottom = 140.0
-
-[node name="BallisticCore" type="PanelContainer" parent="."]
+[node name="MainLayout" type="VBoxContainer" parent="." unique_id=505885970]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.0
-anchor_top = 0.1
-anchor_right = 0.5
-anchor_bottom = 0.6
-margin_left = 20.0
-margin_top = 20.0
-margin_right = -20.0
-margin_bottom = -20.0
-
-[node name="EnergyMatrix" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 0.1
-anchor_right = 1.0
-anchor_bottom = 0.6
-margin_left = 20.0
-margin_top = 20.0
-margin_right = -20.0
-margin_bottom = -20.0
-
-[node name="TacticianProtocol" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.0
-anchor_top = 0.6
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 20.0
-margin_top = 20.0
-margin_right = -20.0
-margin_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Header" type="PanelContainer" parent="MainLayout" unique_id=1031865936]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/Header" unique_id=598469073]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
+
+[node name="HeaderLayout" type="HBoxContainer" parent="MainLayout/Header/MarginContainer" unique_id=1537020070]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="BackButton" type="Button" parent="MainLayout/Header/MarginContainer/HeaderLayout" unique_id=1375846737]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "  ⬅  "
+
+[node name="ScreenTitle" type="Label" parent="MainLayout/Header/MarginContainer/HeaderLayout" unique_id=205544789]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 42
+text = "TECH LAB UPGRADES"
+vertical_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="MainLayout/Header/MarginContainer/HeaderLayout" unique_id=2045371592]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843, 0, 1)
+theme_override_font_sizes/font_size = 36
+text = "💰 0"
+vertical_alignment = 1
+
+[node name="DiamondLabel" type="Label" parent="MainLayout/Header/MarginContainer/HeaderLayout" unique_id=1275576251]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "💎 0"
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainLayout" unique_id=1839989045]
+z_index = -1
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/ScrollContainer" unique_id=479927489]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="UpgradeItemsList" type="VBoxContainer" parent="MainLayout/ScrollContainer/MarginContainer" unique_id=1444447981]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 25
+
+[node name="Footer" type="PanelContainer" parent="MainLayout" unique_id=1361234632]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainLayout/Footer" unique_id=1317737086]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="FooterLayout" type="HBoxContainer" parent="MainLayout/Footer/MarginContainer" unique_id=1815323245]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="CloseButton" type="Button" parent="MainLayout/Footer/MarginContainer/FooterLayout" unique_id=1288798428]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "BATTLE"

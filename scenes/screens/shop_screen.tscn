@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://shop_screen"]
+[gd_scene load_steps=3 format=3 uid="uid://d7u6rp8y1x2j"]
 
-[ext_resource type="Script" path="res://scenes/screens/shop_screen.gd" id="1_shop_screen"]
+[ext_resource type="Script" uid="uid://dn7pmp4v12k9" path="res://scenes/screens/shop_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="2_bg"]
 
 [node name="ShopScreen" type="Control"]
 layout_mode = 3
@@ -9,9 +10,20 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_shop_screen")
+script = ExtResource("1_script")
 
-[node name="RootLayout" type="Control" parent="."]
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MainLayout" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,77 +31,115 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SafeArea" type="Control" parent="RootLayout"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Header" type="PanelContainer" parent="MainLayout"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
 
-[node name="TopAppBar" type="Control" parent="RootLayout/SafeArea"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 64.0
-grow_horizontal = 2
+[node name="HeaderMargin" type="MarginContainer" parent="MainLayout/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_right = 30
 
-[node name="TitleLabel" type="Label" parent="RootLayout/SafeArea/TopAppBar"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -16.0
-offset_right = 50.0
-offset_bottom = 16.0
-text = "SHOP"
-theme_override_font_sizes/font_size = 32
-horizontal_alignment = 1
-
-[node name="MainContent" type="Control" parent="RootLayout/SafeArea"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 64.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ShopItemsContainer" type="VBoxContainer" parent="RootLayout/SafeArea/MainContent"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 20.0
-offset_bottom = 20.0
+[node name="HeaderLayout" type="HBoxContainer" parent="MainLayout/Header/HeaderMargin"]
+layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Item1" type="PanelContainer" parent="RootLayout/SafeArea/MainContent/ShopItemsContainer"]
-custom_minimum_size = Vector2(0, 80)
+[node name="BackButton" type="Button" parent="MainLayout/Header/HeaderMargin/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "  ⬅  "
+
+[node name="ScreenTitle" type="Label" parent="MainLayout/Header/HeaderMargin/HeaderLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 42
+text = "SUPPLY SHOP"
+vertical_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="MainLayout/Header/HeaderMargin/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843, 0, 1)
+theme_override_font_sizes/font_size = 36
+text = "💰 0"
+vertical_alignment = 1
+
+[node name="DiamondLabel" type="Label" parent="MainLayout/Header/HeaderMargin/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "💎 0"
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ScrollMargin" type="MarginContainer" parent="MainLayout/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="Categories" type="VBoxContainer" parent="MainLayout/ScrollContainer/ScrollMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 40
+
+[node name="GachaSection" type="VBoxContainer" parent="MainLayout/ScrollContainer/ScrollMargin/Categories"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="GachaTitle" type="Label" parent="MainLayout/ScrollContainer/ScrollMargin/Categories/GachaSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "🤖 MECHA SUPPLY DROPS"
+
+[node name="GachaGrid" type="HFlowContainer" parent="MainLayout/ScrollContainer/ScrollMargin/Categories/GachaSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+
+[node name="DiamondsSection" type="VBoxContainer" parent="MainLayout/ScrollContainer/ScrollMargin/Categories"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="DiamondsTitle" type="Label" parent="MainLayout/ScrollContainer/ScrollMargin/Categories/DiamondsSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "💎 DIAMOND CORE PACKS"
+
+[node name="DiamondsGrid" type="HFlowContainer" parent="MainLayout/ScrollContainer/ScrollMargin/Categories/DiamondsSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+
+[node name="Footer" type="PanelContainer" parent="MainLayout"]
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
-[node name="Item2" type="PanelContainer" parent="RootLayout/SafeArea/MainContent/ShopItemsContainer"]
-custom_minimum_size = Vector2(0, 80)
+[node name="FooterMargin" type="MarginContainer" parent="MainLayout/Footer"]
 layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
 
-[node name="Item3" type="PanelContainer" parent="RootLayout/SafeArea/MainContent/ShopItemsContainer"]
-custom_minimum_size = Vector2(0, 80)
+[node name="FooterLayout" type="HBoxContainer" parent="MainLayout/Footer/FooterMargin"]
 layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
 
-[node name="BottomNav" type="Control" parent="RootLayout/SafeArea"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -80.0
-grow_horizontal = 2
-grow_vertical = 0
+[node name="CloseButton" type="Button" parent="MainLayout/Footer/FooterMargin/FooterLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "BATTLE"
