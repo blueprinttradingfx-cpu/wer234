@@ -1,7 +1,0 @@
-res://scenes/screens/main_gundam/enemy_spawner.gd
-res://systems/battle_manager.gd
-res://scenes/screens/main_gundam/main_gundam_scene.gd
-res://systems/enemy_unit.tscn
-res://addons/gut/gui/editor_globals.gd
-res://addons/gut/gui/EditorRadioButton.tres
-res://scenes/screens/gundam/gundam.tscn
