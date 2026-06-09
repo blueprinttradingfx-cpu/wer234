@@ -10,6 +10,8 @@ var frames_since_init: int = 0
 var spawn_pos: Vector2 = Vector2.ZERO
 var max_distance: float = 5000.0  # Increased max distance to reduce misses
 var target_became_invalid: bool = false  # Track if we already logged target invalidity
+var piercing_level: int = 0  # Number of additional enemies to pierce through
+var _already_hit: Array = []  # Track pierced enemies to avoid double-hits
 
 func _ready() -> void:
 	body_entered.connect(Callable(self, "_on_body_entered"))
@@ -42,10 +44,8 @@ func _physics_process(delta: float) -> void:
 		# Direct hit detection: if bullet is very close to target, apply damage immediately
 		var distance_to_target = global_position.distance_to(target_pos)
 		if distance_to_target < 50.0:  # Collision radius of bullet + target (increased from 25)
-			if target_node.has_method("take_damage"):
-				target_node.take_damage(damage_value)
-				queue_free()
-				return
+			_apply_hit(target_node)
+			return
 	else:
 		# Target was destroyed or became invalid - try to acquire new nearest target
 		if not target_became_invalid:
@@ -89,32 +89,50 @@ func _physics_process(delta: float) -> void:
 	var overlapped_bodies = get_overlapping_bodies()
 	for body in overlapped_bodies:
 		if is_instance_valid(body) and body.is_in_group("enemies") and body.has_method("take_damage"):
-			body.take_damage(damage_value)
-			queue_free()
+			_apply_hit(body)
 			return
 
 	var overlapped_areas = get_overlapping_areas()
 	for area in overlapped_areas:
 		if is_instance_valid(area) and area.is_in_group("enemies") and area.has_method("take_damage"):
-			area.take_damage(damage_value)
-			queue_free()
+			_apply_hit(area)
 			return
 
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("enemies") and body.has_method("take_damage"):
-		body.take_damage(damage_value)
-		queue_free()
+		_apply_hit(body)
 
 func _on_area_entered(area: Area2D) -> void:
 	# Extra check: if this collided area is the expected target_node, prefer that
 	if is_instance_valid(target_node) and area == target_node:
 		if area.has_method("take_damage"):
-			area.take_damage(damage_value)
-			queue_free()
+			_apply_hit(area)
 			return
 	if area.is_in_group("enemies") and area.has_method("take_damage"):
-		area.take_damage(damage_value)
-		queue_free()
+		_apply_hit(area)
+
+## Centralized hit handler: applies damage, then either pierces through or dies.
+func _apply_hit(target: Node) -> void:
+	if target in _already_hit:
+		return  # Already pierced through this enemy
+	
+	# Primary target gets full damage
+	var is_pierce_hit = not _already_hit.is_empty()
+	var applied_damage = damage_value * (0.5 if is_pierce_hit else 1.0)
+	
+	if target.has_method("take_damage"):
+		target.take_damage(applied_damage)
+	
+	_already_hit.append(target)
+	
+	# If we still have piercing budget, continue flying
+	if piercing_level > 0 and _already_hit.size() <= piercing_level:
+		# Don't queue_free — bullet continues along its trajectory
+		print("[BulletProjectile] Pierced through %s (%d/%d)" % [target.name, _already_hit.size(), piercing_level + 1])
+		return
+	
+	# No pierce remaining — bullet is spent
+	queue_free()
 
 func _on_lifetime_expired() -> void:
 	# Bullet timed out without hitting anything

@@ -133,7 +133,8 @@ func deploy_projectiles(count: int, targets: Array[Node2D]) -> void:
 				"target_node": target,
 				"target_position": target.global_position,
 				"damage": base_damage,
-				"bullet_index": i
+				"bullet_index": i,
+				"piercing_level": piercing_level
 			})
 
 func _apply_damage_with_piercing(target: Node2D, damage: float) -> void:

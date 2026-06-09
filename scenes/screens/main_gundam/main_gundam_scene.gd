@@ -15,6 +15,7 @@ extends Control
 @onready var stage_label: Label = %StageLabel
 @onready var gameplay_arena: Node2D = %GameplayArena
 @onready var battery_progress: ProgressBar = %BatteryProgress
+@onready var settings_button: Button = %SettingsButton
 
 const UPGRADE_EFFECT_SYSTEM := preload("res://systems/upgrade_effect_system.gd")
 
@@ -26,6 +27,7 @@ var battery_update_timer: Timer
 var upgrade_effect_system: UpgradeEffectSystem = null
 var current_upgrade_overlay: SoftwareUpgradeOverlay = null
 var current_game_over_overlay: GameOverOverlay = null
+var settings_overlay_scene: PackedScene = preload("res://scenes/overlays/settings_overlay.tscn")
 
 # --- Live Stats Modifiers ---
 var multi_shot_level: int = 0
@@ -51,6 +53,10 @@ func _ready() -> void:
 	_setup_upgrade_effect_system()
 	_connect_autoload_signals()
 	_load_initial_upgrades()
+	
+	if settings_button:
+		settings_button.pressed.connect(_on_settings_pressed)
+		
 	_start_current_game_session()
 
 func _setup_enemy_spawner() -> void:
@@ -109,6 +115,7 @@ func _connect_autoload_signals() -> void:
 		bm.battle_victory.connect(_on_battle_victory)
 		bm.battle_defeat.connect(_on_battle_defeat)
 		bm.upgrade_milestone_reached.connect(_on_upgrade_milestone_reached)
+		bm.wave_skipped.connect(_on_wave_skipped)
 
 func _load_initial_upgrades() -> void:
 	var ss = get_node_or_null("/root/SaveSystem")
@@ -203,11 +210,12 @@ func _on_enemy_shot_fired(projectile_data: Dictionary) -> void:
 	var target_position = projectile_data.get("target_position", Vector2.ZERO)
 	var damage = projectile_data.get("damage", 10.0)
 	var bullet_index = projectile_data.get("bullet_index", 0)
+	var piercing_level = projectile_data.get("piercing_level", 0)
 	
 	# Spawn visual projectile
-	_spawn_bullet_projectile(target_node, target_position, damage, bullet_index)
+	_spawn_bullet_projectile(target_node, target_position, damage, bullet_index, piercing_level)
 
-func _spawn_bullet_projectile(target_node: Node2D, target_position: Vector2, damage: float, bullet_index: int) -> void:
+func _spawn_bullet_projectile(target_node: Node2D, target_position: Vector2, damage: float, bullet_index: int, piercing_level: int = 0) -> void:
 	var bullet_scene = load("res://systems/bullet_projectile.tscn")
 	if not bullet_scene:
 		push_error("[MainGameScene] Failed to load bullet_projectile.tscn")
@@ -237,6 +245,10 @@ func _spawn_bullet_projectile(target_node: Node2D, target_position: Vector2, dam
 	
 	# Use the target node passed from weapon system (already validated)
 	bullet.initialize(spawn_position, target_node, damage)
+	
+	# Inject piercing level so the bullet handles pierce-through on impact
+	if piercing_level > 0:
+		bullet.piercing_level = piercing_level
 	
 	# Add to gameplay arena
 	if gameplay_arena:
@@ -383,6 +395,27 @@ func _on_battle_defeat(reason: String) -> void:
 func _on_upgrade_milestone_reached(wave: int) -> void:
 	print("[MainGameScene] Upgrade milestone popup opening for wave %d" % wave)
 	_show_upgrade_overlay(wave)
+
+func _on_wave_skipped(target_wave: int, multiplier: float) -> void:
+	print("🚀 [SYSTEM RAPID CLEANUP] Wave skip triggered! Jumped to wave ", target_wave)
+	
+	var notif = Label.new()
+	notif.text = "[SYSTEM RAPID CLEANUP] +%d WAVES" % int(multiplier)
+	notif.add_theme_color_override("font_color", Color(0.2, 1.0, 1.0))
+	notif.add_theme_font_size_override("font_size", 28)
+	
+	# Center horizontally and position slightly above center
+	notif.position = Vector2(100, 350)
+	
+	if gameplay_arena:
+		gameplay_arena.add_child(notif)
+	else:
+		add_child(notif)
+	
+	var tween = create_tween()
+	tween.tween_property(notif, "position", Vector2(100, 200), 2.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(notif, "modulate:a", 0.0, 2.0)
+	tween.tween_callback(notif.queue_free)
 
 func _setup_upgrade_effect_system() -> void:
 	if upgrade_effect_system:
@@ -538,3 +571,22 @@ func _on_game_over_quit() -> void:
 		get_tree().change_scene_to_file(main_menu_path)
 	else:
 		get_tree().reload_current_scene()
+
+func _on_settings_pressed() -> void:
+	var battle_manager = get_node_or_null("/root/BattleManager")
+	if battle_manager:
+		battle_manager.pause_battle()
+	
+	var overlay = settings_overlay_scene.instantiate()
+	overlay.resume_requested.connect(_on_settings_resume)
+	
+	var canvas = get_node_or_null("CanvasLayer")
+	if canvas:
+		canvas.add_child(overlay)
+	else:
+		add_child(overlay)
+
+func _on_settings_resume() -> void:
+	var battle_manager = get_node_or_null("/root/BattleManager")
+	if battle_manager:
+		battle_manager.resume_battle()

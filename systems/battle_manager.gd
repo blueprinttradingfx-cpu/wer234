@@ -27,6 +27,7 @@ var credit_gain_multiplier: float = 1.0
 
 var total_expected_this_wave: int = 0
 var total_spawned_this_wave: int = 0
+var current_wave_start_time: float = 0.0
 
 var custom_spawner: Node = null
 
@@ -95,6 +96,7 @@ func _spawn_current_wave() -> void:
 		
 	total_expected_this_wave = _get_enemies_for_wave(current_wave)
 	total_spawned_this_wave = 0
+	current_wave_start_time = Time.get_ticks_msec() / 1000.0
 	
 	# Use exact PRD flow: continuous staggered spawn inside the wave
 	_spawn_timer.wait_time = 0.25
@@ -124,7 +126,15 @@ func _check_wave_cleared() -> void:
 		return
 		
 	if total_spawned_this_wave >= total_expected_this_wave and alive_enemy_count <= 0:
-		_advance_wave()
+		var wave_clear_time = (Time.get_ticks_msec() / 1000.0) - current_wave_start_time
+		var data_skip_multiplier = current_stage_config.get("data_skip_multiplier", 1)
+		
+		# If cleared fast enough (< 3.0s) and skip is available
+		if wave_clear_time < 1.0 and data_skip_multiplier > 1:
+			skip_waves(data_skip_multiplier)
+		else:
+			_advance_wave()
+			
 		_spawn_current_wave()
 
 func _get_enemies_for_wave(_wave: int) -> int:
@@ -181,6 +191,9 @@ func _spawn_enemy() -> void:
 			spawned_enemy.set("current_hp", enemy_hp)
 			spawned_enemy.set_speed_modifier(velocity_mod)
 			
+			var archetype = current_stage_config.get("archetype", "The Entry Stream")
+			_apply_archetype_mechanics(spawned_enemy, archetype, enemy_hp)
+			
 		if spawned_enemy.has_signal("destroyed"):
 			spawned_enemy.destroyed.connect(_on_enemy_destroyed)
 		return
@@ -202,6 +215,9 @@ func _spawn_enemy() -> void:
 		enemy.current_hp = enemy_hp
 		if enemy.has_method("set_speed_modifier"):
 			enemy.set_speed_modifier(velocity_mod)
+			
+		var archetype = current_stage_config.get("archetype", "The Entry Stream")
+		_apply_archetype_mechanics(enemy, archetype, enemy_hp)
 	
 	# Spawn at random edge position
 	var spawn_pos = _get_random_spawn_position()
@@ -241,6 +257,76 @@ func _on_enemy_destroyed() -> void:
 func end_battle(reason: String = "Manual End") -> void:
 	if battle_state == BattleState.ACTIVE:
 		_handle_defeat(reason)
+
+func get_state_string() -> String:
+	match battle_state:
+		BattleState.IDLE: return "IDLE"
+		BattleState.ACTIVE: return "ACTIVE"
+		BattleState.PAUSED: return "PAUSED"
+		BattleState.VICTORY: return "VICTORY"
+		BattleState.DEFEATED: return "DEFEATED"
+	return "UNKNOWN"
+
+func _apply_archetype_mechanics(enemy: Node2D, archetype: String, base_hp: float) -> void:
+	if not is_instance_valid(enemy):
+		return
+		
+	# Store archetype identifier on the unit if supported (useful for debugging/logging)
+	if "archetype" in enemy:
+		enemy.set("archetype", archetype)
+
+	match archetype:
+		"Shielded Packets":
+			if enemy.has_method("enable_shield"):
+				# 50% HP as shield, 50% damage reduction
+				enemy.enable_shield(base_hp * 0.5, 0.5)
+		"Splitting Malware":
+			if enemy.has_method("enable_splitting"):
+				# 2 children, 0 depth, max 2 depth, 50% hp multiplier
+				enemy.enable_splitting(2, 0, 2, 0.5)
+		"The EMP Jammer":
+			if enemy.has_method("enable_emp"):
+				# 150px radius, 2s duration, on death
+				enemy.enable_emp(150.0, 2.0, true)
+		"Re-routing Logic":
+			if enemy.has_method("enable_re_routing"):
+				# 3 seconds interval
+				enemy.enable_re_routing(3.0)
+		"Regenerative Stream":
+			if enemy.has_method("enable_regen"):
+				# 10% HP per sec, 2s pause
+				enemy.enable_regen(base_hp * 0.1, 2.0)
+		"Swarm Carrier":
+			if enemy.has_method("enable_carrier"):
+				# 3 payload size, 2s interval, 30% hp
+				enemy.enable_carrier(3, 2.0, 0.3)
+		"The Phantom Grid":
+			if enemy.has_method("enable_cloak"):
+				# 3s cloak, 5s cooldown
+				enemy.enable_cloak(3.0, 5.0)
+		"The Final Meltdown":
+			# Curated combination of the deadliest mechanics (Shield + Splitting + Regen)
+			if enemy.has_method("enable_shield"):
+				enemy.enable_shield(base_hp * 0.5, 0.5)
+			if enemy.has_method("enable_regen"):
+				enemy.enable_regen(base_hp * 0.1, 2.0)
+			if enemy.has_method("enable_splitting"):
+				enemy.enable_splitting(2, 0, 2, 0.5)
+		_:
+			# "The Entry Stream", "The Rush Protocol" or unhandled defaults have no extra mechanics
+			pass
+
+func pause_battle() -> void:
+	if battle_state == BattleState.ACTIVE:
+		_set_battle_state(BattleState.PAUSED)
+		_stage_timer.paused = true
+		_spawn_timer.paused = true
+
+func resume_battle() -> void:
+	if battle_state == BattleState.PAUSED:
+		_set_battle_state(BattleState.ACTIVE)
+		_stage_timer.paused = false
+		_spawn_timer.paused = false
 
 func register_enemy_destruction() -> void:
 	register_enemy_destroyed()
@@ -340,15 +426,3 @@ func add_shield_points(amount: int) -> void:
 func apply_credit_gain_multiplier(multiplier: float) -> void:
 	credit_gain_multiplier = max(1.0, credit_gain_multiplier * multiplier)
 	print("[BattleManager] Credit gain multiplier set to %.2f" % credit_gain_multiplier)
-
-func pause_battle() -> void:
-	if battle_state == BattleState.ACTIVE:
-		_set_battle_state(BattleState.PAUSED)
-		_stage_timer.stop()
-		_spawn_timer.stop()
-
-func resume_battle() -> void:
-	if battle_state == BattleState.PAUSED:
-		_set_battle_state(BattleState.ACTIVE)
-		_stage_timer.start()
-		_spawn_timer.start()

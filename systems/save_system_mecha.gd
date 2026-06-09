@@ -62,6 +62,10 @@ func _create_new_save() -> void:
 	}
 	save_game()
 
+func reset_progress() -> void:
+	_create_new_save()
+	save_loaded.emit()
+
 func _migrate(data: Dictionary) -> Dictionary:
 	# Add custom serialization checks here if structural changes happen down the line
 	return data
