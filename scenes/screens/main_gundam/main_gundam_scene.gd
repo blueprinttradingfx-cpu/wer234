@@ -12,6 +12,7 @@ extends Control
 @onready var alive_counter_label: Label = %AliveCounterLabel
 @onready var clock_label: Label = %ClockLabel
 @onready var wave_label: Label = %WaveLabel
+@onready var stage_label: Label = %StageLabel
 @onready var gameplay_arena: Node2D = %GameplayArena
 @onready var battery_progress: ProgressBar = %BatteryProgress
 
@@ -24,6 +25,7 @@ var mecha_instance: Node2D = null
 var battery_update_timer: Timer
 var upgrade_effect_system: UpgradeEffectSystem = null
 var current_upgrade_overlay: SoftwareUpgradeOverlay = null
+var current_game_over_overlay: GameOverOverlay = null
 
 # --- Live Stats Modifiers ---
 var multi_shot_level: int = 0
@@ -35,7 +37,7 @@ var alive_enemies_count: int = 0:
 	set(value):
 		alive_enemies_count = value
 		_update_ui()
-		if alive_enemies_count >= 50:
+		if alive_enemies_count >= 50 and is_game_active:
 			trigger_system_overflow_failure()
 
 var current_stage: int = 11
@@ -126,6 +128,22 @@ func _start_current_game_session() -> void:
 	var pm = get_node_or_null("/root/ProgressionManager")
 	if pm and "current_player_stage" in pm:
 		current_stage = pm.current_player_stage
+		
+	# Update header labels with real values
+	if stage_label:
+		stage_label.text = "STAGE %d" % current_stage
+	if wave_label:
+		wave_label.text = "[WAVE %d/100]" % current_wave
+	if clock_label:
+		var minutes: int = int(match_remaining_time) / 60
+		var seconds: int = int(match_remaining_time) % 60
+		clock_label.text = "DEATH IN %02d:%02d" % [minutes, seconds]
+		if match_remaining_time <= 30.0:
+			clock_label.modulate = Color.RED
+		else:
+			clock_label.modulate = Color.WHITE
+	if alive_counter_label:
+		alive_counter_label.text = "%d / 50" % alive_enemies_count
 		
 	var bm = get_node_or_null("/root/BattleManager")
 	if bm and bm.has_method("start_battle"):
@@ -229,20 +247,95 @@ func _spawn_bullet_projectile(target_node: Node2D, target_position: Vector2, dam
 func _on_missile_fired(targets: Array, damage_per_rocket: float) -> void:
 	if not is_game_active: return
 	print("🚀 [MISSILE IMPACT] ", targets.size(), " missiles dealing ", damage_per_rocket, " damage each")
+	
+	# Spawn visual missile projectiles for each target
+	for target in targets:
+		if is_instance_valid(target):
+			_spawn_missile_projectile(target, damage_per_rocket)
+
+func _spawn_missile_projectile(target_node: Node2D, damage: float) -> void:
+	var bullet_scene = load("res://systems/bullet_projectile.tscn")
+	if not bullet_scene:
+		return
+	
+	var missile = bullet_scene.instantiate()
+	if not missile.has_method("initialize"):
+		var bullet_script = load("res://systems/bullet_projectile.gd")
+		if bullet_script:
+			missile.set_script(bullet_script)
+		else:
+			return
+	
+	if not missile.has_method("initialize"):
+		return
+	
+	# Missile visual: larger, red-orange color
+	var visual = missile.get_node_or_null("Visual")
+	if visual and visual is ColorRect:
+		visual.color = Color(1.0, 0.25, 0.1, 1.0)  # Red-orange for missiles
+		visual.size = Vector2(12, 12)
+		visual.position = Vector2(-6, -6)
+	
+	# Spawn from mecha position
+	var spawn_position = Vector2.ZERO
+	if is_instance_valid(mecha_instance):
+		spawn_position = mecha_instance.global_position
+	else:
+		spawn_position = gameplay_arena.global_position if gameplay_arena else Vector2(540, 960)
+	
+	# Don't apply damage again - gundam.gd already does take_damage in _fire_homing_missiles
+	missile.initialize(spawn_position, target_node, 0.0)
+	
+	if gameplay_arena:
+		gameplay_arena.add_child(missile)
+	else:
+		add_child(missile)
 
 
 func open_popup_view(menu_type: String) -> void:
 	print("Instantiating overlay view container sector: ", menu_type.to_upper())
 
-func trigger_system_overflow_failure() -> void:
+func trigger_system_overflow_failure(reason: String = "Stage Overflow") -> void:
+	if not is_game_active:
+		return  # Already triggered, prevent re-entry
 	is_game_active = false
-	if is_instance_valid(weapon_system): weapon_system.fire_timer.stop()
-	if is_instance_valid(battery_update_timer): battery_update_timer.stop()
 	
-	print("💥 STAGE OVERFLOW FAILURE: Combat zone breached.")
+	# Stop weapon system
+	if is_instance_valid(weapon_system) and weapon_system.fire_timer:
+		weapon_system.fire_timer.stop()
+	
+	# Stop battery update timer
+	if is_instance_valid(battery_update_timer):
+		battery_update_timer.stop()
+	
+	# Stop mecha missile system
+	if is_instance_valid(mecha_instance) and "missile_cooldown_timer" in mecha_instance:
+		if mecha_instance.missile_cooldown_timer:
+			mecha_instance.missile_cooldown_timer.stop()
+	
+	# Stop BattleManager timers
+	var bm = get_node_or_null("/root/BattleManager")
+	if bm:
+		if bm.has_method("end_battle"):
+			bm.end_battle(reason)
+		else:
+			# Manually stop timers if end_battle not available
+			if "_spawn_timer" in bm and bm._spawn_timer:
+				bm._spawn_timer.stop()
+			if "_stage_timer" in bm and bm._stage_timer:
+				bm._stage_timer.stop()
+	
+	print("💥 DEFEAT: ", reason)
 	var mecha = gameplay_arena.get_child(0) if gameplay_arena.get_child_count() > 0 else null
 	if mecha and mecha.has_method("change_base_emotion"):
-		mecha.change_base_emotion(20) 
+		mecha.change_base_emotion(20)
+	
+	var overlay_text = "STAGE OVERFLOW FAILURE\n50/50 enemies reached — combat zone breached."
+	if reason == "Time Expired":
+		overlay_text = "TIME EXPIRED\nStage maximum time limit (5:00) reached without defeating the boss."
+	
+	# Show game over overlay
+	_show_game_over_overlay(overlay_text)
 
 func trigger_stage_clear_victory() -> void:
 	is_game_active = false
@@ -264,6 +357,7 @@ func _on_battle_state_changed(new_state: int) -> void:
 func _on_wave_changed(wave: int) -> void:
 	current_wave = wave
 	if wave_label: wave_label.text = "[WAVE %d/100]" % wave
+	if stage_label: stage_label.text = "STAGE %d" % current_stage
 	_tick_upgrade_effects_for_wave()
 
 func _on_enemy_count_changed(count: int) -> void:
@@ -274,13 +368,17 @@ func _on_stage_time_changed(time_remaining: float) -> void:
 	if clock_label:
 		var minutes: int = int(match_remaining_time) / 60
 		var seconds: int = int(match_remaining_time) % 60
-		clock_label.text = "%02d:%02d" % [minutes, seconds]
+		clock_label.text = "DEATH IN %02d:%02d" % [minutes, seconds]
+		if match_remaining_time <= 30.0:
+			clock_label.modulate = Color.RED
+		else:
+			clock_label.modulate = Color.WHITE
 
 func _on_battle_victory() -> void:
 	trigger_stage_clear_victory()
 
-func _on_battle_defeat(_reason: String) -> void:
-	trigger_system_overflow_failure()
+func _on_battle_defeat(reason: String) -> void:
+	trigger_system_overflow_failure(reason)
 
 func _on_upgrade_milestone_reached(wave: int) -> void:
 	print("[MainGameScene] Upgrade milestone popup opening for wave %d" % wave)
@@ -388,7 +486,6 @@ func _process(delta: float) -> void:
 
 	# Explicit check to stop code execution if time expires out
 	if match_remaining_time <= 0:
-		trigger_stage_clear_victory()
 		return
 
 	# If all enemies have been killed and spawner has completed its waves
@@ -399,3 +496,45 @@ func _process(delta: float) -> void:
 func _all_waves_spawned_completely() -> bool:
 	# Replace with your wave condition layout if applicable (e.g. current_wave >= total_waves)
 	return current_wave >= 100
+
+# --- Game Over Overlay ---
+func _show_game_over_overlay(reason: String) -> void:
+	# Prevent duplicate overlays
+	if current_game_over_overlay and is_instance_valid(current_game_over_overlay):
+		return
+	
+	var overlay_scene = load("res://scenes/overlays/game_over_overlay.tscn")
+	if not overlay_scene:
+		push_error("[MainGameScene] Failed to load game over overlay scene")
+		return
+	
+	current_game_over_overlay = overlay_scene.instantiate()
+	if current_game_over_overlay:
+		# Connect signals before add_child so they're ready after _ready()
+		current_game_over_overlay.retry_requested.connect(_on_game_over_retry)
+		current_game_over_overlay.quit_requested.connect(_on_game_over_quit)
+		# Store data before adding to tree - overlay will read in _ready()
+		var time_elapsed = 300.0 - match_remaining_time
+		current_game_over_overlay.defeat_reason = reason
+		current_game_over_overlay.final_wave = current_wave
+		current_game_over_overlay.final_enemy_count = alive_enemies_count
+		current_game_over_overlay.elapsed_time = time_elapsed
+		add_child(current_game_over_overlay)
+
+func _close_game_over_overlay() -> void:
+	if current_game_over_overlay and is_instance_valid(current_game_over_overlay):
+		current_game_over_overlay.queue_free()
+		current_game_over_overlay = null
+
+func _on_game_over_retry() -> void:
+	_close_game_over_overlay()
+	get_tree().reload_current_scene()
+
+func _on_game_over_quit() -> void:
+	_close_game_over_overlay()
+	# Return to main menu or quit
+	var main_menu_path = "res://scenes/screens/main_menu.tscn"
+	if ResourceLoader.exists(main_menu_path):
+		get_tree().change_scene_to_file(main_menu_path)
+	else:
+		get_tree().reload_current_scene()

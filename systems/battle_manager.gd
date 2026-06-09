@@ -25,6 +25,9 @@ var boss_active: bool = false
 var shield_points: int = 0
 var credit_gain_multiplier: float = 1.0
 
+var total_expected_this_wave: int = 0
+var total_spawned_this_wave: int = 0
+
 var custom_spawner: Node = null
 
 @export var current_wave_enemy_scene: PackedScene
@@ -62,13 +65,7 @@ func start_battle(stage_id: int) -> void:
 	_set_battle_state(BattleState.ACTIVE)
 	_stage_timer.start()
 	
-	# Calculate spawn interval based on wave density (enemies_per_wave)
-	# Higher density = faster spawn rate (lower interval)
-	var enemies_per_wave = current_stage_config.get("enemies_per_wave", 10)
-	var base_interval = 2.0  # Base spawn interval in seconds
-	var density_multiplier = 10.0 / enemies_per_wave  # Normalize to base of 10 enemies
-	_spawn_timer.wait_time = base_interval * density_multiplier
-	_spawn_timer.start()
+	_spawn_current_wave()
 	
 	wave_changed.emit(current_wave)
 	enemy_count_changed.emit(alive_enemy_count)
@@ -85,51 +82,58 @@ func _on_stage_timer_timeout() -> void:
 	stage_time_remaining -= 1.0
 	stage_time_changed.emit(stage_time_remaining)
 	if stage_time_remaining <= 0:
-		_handle_victory()
+		_handle_defeat("Time Expired")
+
+func _spawn_current_wave() -> void:
+	if current_wave >= 100:
+		if not boss_spawned:
+			_spawn_boss()
+			boss_spawned = true
+			boss_active = true
+			_spawn_timer.stop()
+		return
+		
+	total_expected_this_wave = _get_enemies_for_wave(current_wave)
+	total_spawned_this_wave = 0
+	
+	# Use exact PRD flow: continuous staggered spawn inside the wave
+	_spawn_timer.wait_time = 0.25
+	_spawn_timer.start()
 
 func _on_spawn_timer_timeout() -> void:
-	if battle_state != BattleState.ACTIVE:
+	if battle_state != BattleState.ACTIVE or boss_active:
 		return
-	
-	# Check if boss should spawn at wave 100
-	if current_wave >= 100 and not boss_spawned:
-		_spawn_boss()
-		boss_spawned = true
-		boss_active = true
-		_spawn_timer.stop()  # Stop regular spawning when boss spawns
-		return
-	
-	# Don't spawn regular enemies while boss is active
-	if boss_active:
-		return
-	
-	# Spawn enemies based on wave configuration
-	var enemies_to_spawn = _get_enemies_for_wave(current_wave)
-	_staggered_spawn(enemies_to_spawn)
-	
-	if alive_enemy_count >= max_heart_limit:
-		_handle_defeat("Overflow Limit Reached")
-	
-	# Advance wave after spawning
-	_advance_wave()
+		
+	if total_spawned_this_wave < total_expected_this_wave:
+		_spawn_enemy()
+		alive_enemy_count += 1
+		total_spawned_this_wave += 1
+		enemy_count_changed.emit(alive_enemy_count)
+		
+		if alive_enemy_count >= max_heart_limit:
+			_handle_defeat("Overflow Limit Reached")
+			return
+			
+	if total_spawned_this_wave >= total_expected_this_wave:
+		_spawn_timer.stop()
+		# Wave finished spawning. Immediately check if already cleared.
+		_check_wave_cleared()
 
-func _get_enemies_for_wave(wave: int) -> int:
-	# Calculate enemies per wave based on stage config and wave progression
-	var base_enemies = current_stage_config.get("enemies_per_wave", 10)
-	
-	# Wave scaling: every 10 waves, increase enemy count by 1
-	var wave_scaling = floor(wave / 10.0)
-	
-	# Cap at reasonable maximum
-	var total_enemies = min(base_enemies + wave_scaling, 30)
-	
-	return int(total_enemies)
+func _check_wave_cleared() -> void:
+	if battle_state != BattleState.ACTIVE or boss_active:
+		return
+		
+	if total_spawned_this_wave >= total_expected_this_wave and alive_enemy_count <= 0:
+		_advance_wave()
+		_spawn_current_wave()
+
+func _get_enemies_for_wave(_wave: int) -> int:
+	# Pull strictly from config; no infinite linear scaling
+	return current_stage_config.get("enemies_per_wave", 10)
 
 func _advance_wave() -> void:
 	current_wave += 1
 	wave_changed.emit(current_wave)
-	
-	# Wave milestone events
 	_check_wave_milestones()
 
 func _check_wave_milestones() -> void:
@@ -137,29 +141,6 @@ func _check_wave_milestones() -> void:
 	if current_wave in [20, 40, 60, 80]:
 		print("[BattleManager] Upgrade milestone reached at wave %d" % current_wave)
 		upgrade_milestone_reached.emit(current_wave)
-		return
-
-	# Difficulty milestones at 25, 50, 75
-	if current_wave == 25:
-		print("[BattleManager] Wave 25 milestone reached - increased difficulty")
-		# Could add special wave events here
-	elif current_wave == 50:
-		print("[BattleManager] Wave 50 milestone reached - mid-boss event")
-		# Could add mini-boss or special event
-	elif current_wave == 75:
-		print("[BattleManager] Wave 75 milestone reached - pre-boss surge")
-		# Could add enemy surge or special composition
-
-func _staggered_spawn(count: int) -> void:
-	for i in range(count):
-		# We use get_tree().create_timer to add a 0.2 second delay between each enemy in the wave
-		# so they form a line on the path instead of a single perfect stack
-		get_tree().create_timer(i * 0.25).timeout.connect(func():
-			if battle_state == BattleState.ACTIVE:
-				_spawn_enemy()
-				alive_enemy_count += 1
-				enemy_count_changed.emit(alive_enemy_count)
-		)
 
 func skip_waves(waves_to_skip: int) -> void:
 	if battle_state != BattleState.ACTIVE:
@@ -183,9 +164,9 @@ func skip_waves(waves_to_skip: int) -> void:
 	print("[BattleManager] Skipped to wave %d with reward multiplier %d" % [target_wave, skip_multiplier])
 
 func _spawn_enemy() -> void:
-	print("[BattleManager] _spawn_enemy called. custom_spawner is: ", custom_spawner)
+	#print("[BattleManager] _spawn_enemy called. custom_spawner is: ", custom_spawner)
 	if is_instance_valid(custom_spawner) and custom_spawner.has_method("spawn_wave_enemy"):
-		print("[BattleManager] Calling custom_spawner.spawn_wave_enemy()")
+		#print("[BattleManager] Calling custom_spawner.spawn_wave_enemy()")
 		var spawned_enemy = custom_spawner.spawn_wave_enemy()
 		if not spawned_enemy:
 			print("[BattleManager] spawn_wave_enemy returned null. Returning.")
@@ -300,6 +281,7 @@ func register_enemy_destroyed() -> void:
 	if alive_enemy_count > 0:
 		alive_enemy_count -= 1
 		enemy_count_changed.emit(alive_enemy_count)
+	_check_wave_cleared()
 
 func register_enemy_reached_target() -> void:
 	# Enemy reached the mecha - consume shield first, then lose a heart

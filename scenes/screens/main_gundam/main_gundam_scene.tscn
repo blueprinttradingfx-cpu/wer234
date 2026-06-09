@@ -113,26 +113,27 @@ layout_mode = 2
 theme_override_constants/separation = 15
 
 [node name="StageLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=485746226]
+unique_name_in_owner = true
 layout_mode = 2
-text = "STAGE 11"
+text = "STAGE 1"
 
 [node name="WaveLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=104022919]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "[WAVE 11/100]"
+text = "[WAVE 1/100]"
 horizontal_alignment = 1
 
 [node name="AliveCounterLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=2089405099]
 unique_name_in_owner = true
 layout_mode = 2
-text = "☠️ Alive: 0/50"
+text = "0 / 50"
 horizontal_alignment = 2
 
 [node name="ClockLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=316056301]
 unique_name_in_owner = true
 layout_mode = 2
-text = "⏱️ 04:52"
+text = "05:00"
 
 [node name="SettingsButton" type="Button" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=971056944]
 unique_name_in_owner = true
@@ -275,6 +276,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1947342887]
+visible = false
 position = Vector2(540.5, 959.5)
 scale = Vector2(1.3997396, 1.4048315)
 texture = ExtResource("3_wol8n")

@@ -16,7 +16,7 @@ var square_path_node: Path2D = null
 var gameplay_arena_node: Node2D = null
 
 func spawn_wave_enemy() -> Node2D:
-	print("[EnemySpawner] spawn_wave_enemy called")
+	#print("[EnemySpawner] spawn_wave_enemy called")
 	if active_enemies.size() >= max_screen_capacity:
 		print("[EnemySpawner] Capacity reached")
 		return null
@@ -38,7 +38,7 @@ func spawn_wave_enemy() -> Node2D:
 	
 	# 3. Instantiate the enemy unit and attach it to the follower wrapper
 	var enemy_instance = enemy_scene.instantiate() 
-	print("[EnemySpawner] Instantiated enemy: ", enemy_instance)
+	#print("[EnemySpawner] Instantiated enemy: ", enemy_instance)
 	path_follower.add_child(enemy_instance); 
 	
 	# 4. Attach the wrapper to the path
@@ -373,6 +373,10 @@ func take_damage(amount: float) -> void:
 func _on_enemy_tree_exited(enemy_node: Node2D) -> void:
 	if enemy_node in active_enemies:
 		active_enemies.erase(enemy_node)
+	
+	# Guard: don't touch the tree if we're being torn down (e.g. scene reload)
+	if not is_inside_tree():
+		return
 		
 	var bm = get_node_or_null("/root/BattleManager")
 	if bm:
@@ -383,6 +387,8 @@ func _on_enemy_tree_exited(enemy_node: Node2D) -> void:
 	enemy_defeated.emit(active_enemies.size())
 
 func _sync_battle_manager_count() -> void:
+	if not is_inside_tree():
+		return
 	var bm = get_node_or_null("/root/BattleManager")
 	if bm:
 		bm.alive_enemy_count = active_enemies.size()
