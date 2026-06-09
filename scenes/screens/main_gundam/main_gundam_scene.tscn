@@ -112,6 +112,34 @@ theme_override_constants/margin_right = 30
 layout_mode = 2
 theme_override_constants/separation = 15
 
+[node name="PlayerIconButton" type="Button" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " 👤 "
+
+[node name="PlayerNameLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pilot Alpha"
+
+[node name="VSeparator1" type="VSeparator" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843, 0, 1)
+text = "💰 0"
+
+[node name="DiamondLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+text = "💎 0"
+
+[node name="VSeparator2" type="VSeparator" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout"]
+layout_mode = 2
+
 [node name="StageLabel" type="Label" parent="CanvasLayer/UIControl/Header/MarginContainer/HeaderLayout" unique_id=485746226]
 unique_name_in_owner = true
 layout_mode = 2

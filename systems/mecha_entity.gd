@@ -5,12 +5,12 @@ class_name MechaEntity
 signal missile_fired(target: Node2D, damage: float)
 signal stats_updated()
 
-# --- VARIABLES ---
-var base_attack_damage: float = 10.0
-var base_attack_speed: float = 2.5 # attacks per second
-var missile_damage: float = 10.0
-var missile_max_targets: int = 5
-var missile_cooldown: float = 10.0 # seconds
+# --- VARIABLES (Values populated from JSON via ProgressionManager) ---
+var base_attack_damage: float = 0.0
+var base_attack_speed: float = 0.0 # attacks per second
+var missile_damage: float = 0.0
+var missile_max_targets: int = 0
+var missile_cooldown: float = 0.0 # seconds
 var _emp_level: int = 0
 
 var current_mecha_id: String = "mecha_unit_alpha_base"
@@ -45,7 +45,7 @@ func _load_mecha_stats() -> void:
 			current_mecha_id = mecha_stats.get("mecha_id", "mecha_unit_alpha_base")
 			var base_stats = mecha_stats.get("base_stats", {})
 			base_attack_damage = base_stats.get("attack_damage", 10.0)
-			base_attack_speed = base_stats.get("attack_speed", 2.5)
+			base_attack_speed = base_stats.get("attack_speed", 1.0)
 			
 			var skill = mecha_stats.get("skill", {})
 			missile_damage = skill.get("total_damage", 50.0)
@@ -63,10 +63,10 @@ func _load_mecha_stats() -> void:
 	stats_updated.emit()
 
 func _apply_upgrade_modifiers() -> void:
-	# Chassis Calibrator: attack speed 2.5 → 8.0
+	# Chassis Calibrator: attack speed scales from base to 8.0
 	var chassis_level = SaveSystem.get_upgrade_level("ballistic_core", "chassis_calibrator_level")
 	if chassis_level > 0:
-		base_attack_speed = lerp(2.5, 8.0, float(chassis_level) / 10.0)
+		base_attack_speed = lerp(base_attack_speed, 8.0, float(chassis_level) / 10.0)
 	
 	# Processor Overclock: missile cooldown 10.0 → 4.0
 	var overclock_level = SaveSystem.get_upgrade_level("energy_matrix", "processor_overclock_level")

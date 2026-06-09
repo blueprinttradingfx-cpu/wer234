@@ -117,7 +117,11 @@ func get_config_for_stage(stage_id: int) -> Dictionary:
 		"boss_hp": 290.0,
 		"enemies_per_wave": 10,
 		"velocity_modifier": 1.0,
-		"data_skip_multiplier": 1
+		"data_skip_multiplier": 1,
+		"spawn_interval": 0.5,
+		"wave_delay": 2.0,
+		"total_waves": 100,
+		"enemy_movement_speed": 35.0
 	}
 	
 	if stage_db.is_empty() or not stage_db.has("cycles"):
@@ -132,11 +136,15 @@ func get_config_for_stage(stage_id: int) -> Dictionary:
 				if stage["stage_id"] == stage_id:
 					result["stage_name"] = stage["stage_name"]
 					result["archetype"] = stage["archetype"]
-					result["enemy_hp"] = 10.0 * hp_multiplier # Applies the cycle stat wall
+					result["enemy_hp"] = stage.get("enemy_hp", 10.0) * hp_multiplier # Applies the cycle stat wall
 					result["boss_hp"] = stage["boss_hp"]
 					result["enemies_per_wave"] = stage["enemies_per_wave"]
 					result["velocity_modifier"] = stage["velocity_modifier"]
 					result["data_skip_multiplier"] = stage["data_skip_multiplier"]
+					result["spawn_interval"] = stage.get("spawn_interval", 0.5)
+					result["wave_delay"] = stage.get("wave_delay", 2.0)
+					result["total_waves"] = stage.get("total_waves", 100)
+					result["enemy_movement_speed"] = stage.get("enemy_movement_speed", 35.0)
 					break
 			return result
 	return result

@@ -8,8 +8,8 @@ signal enemy_shot_fired(projectile_data: Dictionary)
 const BASE_ENEMY_HP := 10.0
 
 # --- CONFIGURATION REFERENCES (Injected by BattleManager) ---
-var base_damage: float = 10.0
-var attack_speed: float = 2.5 # Attacks per second
+var base_damage: float = 0.0 # Populated from JSON via MechaEntity
+var attack_speed: float = 0.0 # Populated from JSON via MechaEntity
 
 # --- MULTI-SHOT UPGRADE STATE ---
 # Level 0: Pure Single Shot
@@ -43,14 +43,17 @@ func update_weapon_speed() -> void:
 		if attack_speed > 0:
 			fire_timer.wait_time = 1.0 / attack_speed
 			fire_timer.start()
+			print("[WeaponSystem] ✅ Timer STARTED | attack_speed=", attack_speed, " | interval=", fire_timer.wait_time, "s")
 		else:
 			fire_timer.stop()
+			print("[WeaponSystem] ⚠ Timer STOPPED | attack_speed=", attack_speed)
 
 func _on_fire_timer_timeout() -> void:
 	var target_enemies = acquire_targets()
 	if target_enemies.is_empty():
 		return # Idle state: No enemies within screen boundaries
-		
+	
+	print("[WeaponSystem] FIRE | attack_speed=", attack_speed, " | fire_interval=", fire_timer.wait_time, "s | base_damage=", base_damage)
 	execute_firing_sequence(target_enemies)
 
 ## Scans the screen context to return valid targets sorted by closest distance

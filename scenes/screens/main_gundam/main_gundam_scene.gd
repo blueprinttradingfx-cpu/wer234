@@ -8,6 +8,13 @@ extends Control
 @onready var matrix_btn: Button = %MatrixBtn
 @onready var overclock_btn: Button = %OverclockBtn
 
+# --- Footer Button Mappings ---
+@onready var shop_btn: Button = %ShopButton
+@onready var hangar_btn: Button = %HangarButton
+@onready var upgrades_btn: Button = %UpgradesButton
+@onready var battle_pass_btn: Button = %BattlePassButton
+@onready var leaderboard_btn: Button = %LeaderboardButton
+
 # --- Scene Unique Node Mappings ---
 @onready var alive_counter_label: Label = %AliveCounterLabel
 @onready var clock_label: Label = %ClockLabel
@@ -16,6 +23,10 @@ extends Control
 @onready var gameplay_arena: Node2D = %GameplayArena
 @onready var battery_progress: ProgressBar = %BatteryProgress
 @onready var settings_button: Button = %SettingsButton
+@onready var player_icon_btn: Button = %PlayerIconButton
+@onready var player_name_label: Label = %PlayerNameLabel
+@onready var gold_label: Label = %GoldLabel
+@onready var diamond_label: Label = %DiamondLabel
 
 const UPGRADE_EFFECT_SYSTEM := preload("res://systems/upgrade_effect_system.gd")
 
@@ -28,6 +39,7 @@ var upgrade_effect_system: UpgradeEffectSystem = null
 var current_upgrade_overlay: SoftwareUpgradeOverlay = null
 var current_game_over_overlay: GameOverOverlay = null
 var settings_overlay_scene: PackedScene = preload("res://scenes/overlays/settings_overlay.tscn")
+var player_info_scene: PackedScene = preload("res://scenes/overlays/player_info_overlay.tscn")
 
 # --- Live Stats Modifiers ---
 var multi_shot_level: int = 0
@@ -56,8 +68,41 @@ func _ready() -> void:
 	
 	if settings_button:
 		settings_button.pressed.connect(_on_settings_pressed)
+	if player_icon_btn:
+		player_icon_btn.pressed.connect(_on_player_icon_pressed)
 		
+	_connect_ui_buttons()
+	_update_header_resources()
 	_start_current_game_session()
+
+func _update_header_resources() -> void:
+	var save_system = get_node_or_null("/root/SaveSystem")
+	if save_system:
+		if gold_label: gold_label.text = "💰 " + str(save_system.get_tech_credits())
+		if diamond_label: diamond_label.text = "💎 0" # Or pull premium currency if implemented
+
+func _connect_ui_buttons() -> void:
+	if atk_spd_btn: atk_spd_btn.pressed.connect(_on_software_powerup_pressed)
+	if pierce_btn: pierce_btn.pressed.connect(_on_software_powerup_pressed)
+	if cooldown_btn: cooldown_btn.pressed.connect(_on_software_powerup_pressed)
+	if move_spd_btn: move_spd_btn.pressed.connect(_on_software_powerup_pressed)
+	if matrix_btn: matrix_btn.pressed.connect(_on_software_powerup_pressed)
+	if overclock_btn: overclock_btn.pressed.connect(_on_software_powerup_pressed)
+	
+	if shop_btn: shop_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/shop_screen.tscn"))
+	if hangar_btn: hangar_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/hangar_screen.tscn"))
+	if upgrades_btn: upgrades_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/upgrades_screen.tscn"))
+	if battle_pass_btn: battle_pass_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/battle_pass_screen.tscn"))
+	if leaderboard_btn: leaderboard_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/leaderboard_screen.tscn"))
+
+func _on_software_powerup_pressed() -> void:
+	_show_upgrade_overlay(current_wave)
+
+func _on_footer_btn_pressed(scene_path: String) -> void:
+	if ResourceLoader.exists(scene_path):
+		get_tree().change_scene_to_file(scene_path)
+	else:
+		push_warning("Scene not found: " + scene_path)
 
 func _setup_enemy_spawner() -> void:
 	spawner_node = get_node_or_null("EnemySpawner")
@@ -96,6 +141,26 @@ func _setup_scene_timers() -> void:
 		add_child(weapon_system)
 		if weapon_system.has_signal("enemy_shot_fired"):
 			weapon_system.enemy_shot_fired.connect(_on_enemy_shot_fired)
+		
+		# Create MechaEntity and connect weapon system so JSON stats flow through
+		var mecha_entity_script = load("res://systems/mecha_entity.gd")
+		if mecha_entity_script:
+			mecha_instance = Node2D.new()
+			mecha_instance.name = "MechaEntity"
+			mecha_instance.set_script(mecha_entity_script)
+			mecha_instance.weapon_system = weapon_system
+			add_child(mecha_instance)
+			# _ready() on mecha_entity will call _load_mecha_stats() which sets weapon_system speed
+			print("[MainGameScene] ✅ MechaEntity created & weapon_system connected | atk_speed=", weapon_system.attack_speed)
+		else:
+			# Fallback: manually set attack speed from JSON
+			print("[MainGameScene] ⚠ mecha_entity.gd not found, setting weapon speed from ProgressionManager directly")
+			var pm = get_node_or_null("/root/ProgressionManager")
+			if pm:
+				var stats = pm.get_active_mecha_stats()
+				var base_stats = stats.get("base_stats", {})
+				weapon_system.set_attack_speed(base_stats.get("attack_speed", 1.0))
+				weapon_system.set_base_damage(base_stats.get("attack_damage", 10.0))
 	else:
 		push_error("[MainGameScene] Failed to load WeaponSystem scene")
 	
@@ -121,12 +186,11 @@ func _load_initial_upgrades() -> void:
 	var ss = get_node_or_null("/root/SaveSystem")
 	if ss and ss.has_method("get_upgrade_level"):
 		multi_shot_level = ss.get_upgrade_level("ballistic_core", "multi_shot_loader_level")
-		var attack_speed_upgrade = ss.get_upgrade_level("ballistic_core", "chassis_calibrator_level")
 		var pierce_upgrade = ss.get_upgrade_level("ballistic_core", "piercing_barrel_level")
 		
 		if weapon_system:
 			weapon_system.set_multi_shot_level(multi_shot_level)
-			weapon_system.set_attack_speed(2.5 + (attack_speed_upgrade * 0.55)) # 2.5 to 8.0
+			# Attack speed is now driven by mecha_entity._load_mecha_stats() from JSON
 			if pierce_upgrade > 0:
 				pierce_unlocked = true
 
@@ -442,7 +506,12 @@ func _show_upgrade_overlay(wave: int) -> void:
 	if current_upgrade_overlay:
 		current_upgrade_overlay.upgrade_selected.connect(_on_upgrade_selected)
 		current_upgrade_overlay.re_roll_requested.connect(_on_upgrade_reroll_requested)
-		add_child(current_upgrade_overlay)
+		
+		var canvas = get_node_or_null("CanvasLayer")
+		if canvas:
+			canvas.add_child(current_upgrade_overlay)
+		else:
+			add_child(current_upgrade_overlay)
 
 func _close_upgrade_overlay() -> void:
 	if current_upgrade_overlay and is_instance_valid(current_upgrade_overlay):
@@ -485,8 +554,9 @@ func _on_atk_spd_btn_pressed() -> void:
 		var current_level = ss.get_upgrade_level("ballistic_core", "chassis_calibrator_level")
 		var new_level = min(current_level + 1, 10)
 		ss.set_upgrade_level("ballistic_core", "chassis_calibrator_level", new_level)
-		if weapon_system:
-			weapon_system.set_attack_speed(2.5 + (new_level * 0.55))
+		# Reload mecha stats from JSON to recalculate with new upgrade level
+		if mecha_instance and mecha_instance.has_method("_load_mecha_stats"):
+			mecha_instance._load_mecha_stats()
 
 func _on_pierce_btn_pressed() -> void:
 	pierce_unlocked = true
@@ -552,7 +622,12 @@ func _show_game_over_overlay(reason: String) -> void:
 		current_game_over_overlay.final_wave = current_wave
 		current_game_over_overlay.final_enemy_count = alive_enemies_count
 		current_game_over_overlay.elapsed_time = time_elapsed
-		add_child(current_game_over_overlay)
+		
+		var canvas = get_node_or_null("CanvasLayer")
+		if canvas:
+			canvas.add_child(current_game_over_overlay)
+		else:
+			add_child(current_game_over_overlay)
 
 func _close_game_over_overlay() -> void:
 	if current_game_over_overlay and is_instance_valid(current_game_over_overlay):
@@ -571,6 +646,20 @@ func _on_game_over_quit() -> void:
 		get_tree().change_scene_to_file(main_menu_path)
 	else:
 		get_tree().reload_current_scene()
+
+func _on_player_icon_pressed() -> void:
+	var battle_manager = get_node_or_null("/root/BattleManager")
+	if battle_manager:
+		battle_manager.pause_battle()
+	
+	var overlay = player_info_scene.instantiate()
+	overlay.resume_requested.connect(_on_settings_resume) # Re-use the resume logic
+	
+	var canvas = get_node_or_null("CanvasLayer")
+	if canvas:
+		canvas.add_child(overlay)
+	else:
+		add_child(overlay)
 
 func _on_settings_pressed() -> void:
 	var battle_manager = get_node_or_null("/root/BattleManager")

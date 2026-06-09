@@ -53,11 +53,8 @@ func _create_new_save() -> void:
 			"unlocked_mecha_ids": ["mecha_unit_alpha_base"]
 		},
 		"upgrades": {
-			"systems": {
-				"attack_speed": 1,
-				"pierce": 0,
-				"cooldown": 1
-			}
+			"ballistic_core": {},
+			"energy_matrix": {}
 		}
 	}
 	save_game()
@@ -119,8 +116,8 @@ func set_upgrade_level(module: String, upgrade: String, level: int) -> void:
 
 func get_upgrade_level(module: String, upgrade: String) -> int:
 	if _save_data.has("upgrades") and _save_data["upgrades"].has(module):
-		return _save_data["upgrades"][module].get(upgrade, 1)
-	return 1
+		return _save_data["upgrades"][module].get(upgrade, 0)
+	return 0
 
 func get_tech_credits() -> int:
 	if _save_data.has("economy"):

@@ -35,6 +35,8 @@ var custom_spawner: Node = null
 
 var _stage_timer: Timer
 var _spawn_timer: Timer
+var _wave_delay_timer: Timer
+var enemy_speed_global_modifier: float = 1.2 # +20% movement speed
 
 func _ready() -> void:
 	_setup_timers()
@@ -48,6 +50,11 @@ func _setup_timers() -> void:
 	_spawn_timer = Timer.new()
 	_spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 	add_child(_spawn_timer)
+	
+	_wave_delay_timer = Timer.new()
+	_wave_delay_timer.one_shot = true
+	_wave_delay_timer.timeout.connect(_on_wave_delay_timeout)
+	add_child(_wave_delay_timer)
 
 func start_battle(stage_id: int) -> void:
 	current_wave = 1
@@ -86,7 +93,8 @@ func _on_stage_timer_timeout() -> void:
 		_handle_defeat("Time Expired")
 
 func _spawn_current_wave() -> void:
-	if current_wave >= 100:
+	var total_waves = current_stage_config.get("total_waves", 100)
+	if current_wave >= total_waves:
 		if not boss_spawned:
 			_spawn_boss()
 			boss_spawned = true
@@ -98,9 +106,10 @@ func _spawn_current_wave() -> void:
 	total_spawned_this_wave = 0
 	current_wave_start_time = Time.get_ticks_msec() / 1000.0
 	
-	# Use exact PRD flow: continuous staggered spawn inside the wave
-	_spawn_timer.wait_time = 0.25
+	var spawn_interval = current_stage_config.get("spawn_interval", 0.5)
+	_spawn_timer.wait_time = spawn_interval
 	_spawn_timer.start()
+	print("[BattleManager] 🌊 Wave %d STARTED | Expected enemies: %d" % [current_wave, total_expected_this_wave])
 
 func _on_spawn_timer_timeout() -> void:
 	if battle_state != BattleState.ACTIVE or boss_active:
@@ -118,8 +127,12 @@ func _on_spawn_timer_timeout() -> void:
 			
 	if total_spawned_this_wave >= total_expected_this_wave:
 		_spawn_timer.stop()
-		# Wave finished spawning. Immediately check if already cleared.
-		_check_wave_cleared()
+		
+		var wave_delay = current_stage_config.get("wave_delay", 2.0)
+		print("[BattleManager] ⏱ Wave %d finished spawning. Delaying %.1fs before next wave..." % [current_wave, wave_delay])
+		
+		_wave_delay_timer.wait_time = wave_delay
+		_wave_delay_timer.start()
 
 func _check_wave_cleared() -> void:
 	if battle_state != BattleState.ACTIVE or boss_active:
@@ -129,13 +142,17 @@ func _check_wave_cleared() -> void:
 		var wave_clear_time = (Time.get_ticks_msec() / 1000.0) - current_wave_start_time
 		var data_skip_multiplier = current_stage_config.get("data_skip_multiplier", 1)
 		
-		# If cleared fast enough (< 3.0s) and skip is available
+		# If cleared fast enough (< 1.0s) and skip is available, apply skip bonus
 		if wave_clear_time < 1.0 and data_skip_multiplier > 1:
 			skip_waves(data_skip_multiplier)
-		else:
-			_advance_wave()
-			
+
+func _on_wave_delay_timeout() -> void:
+	print("[BattleManager] _on_wave_delay_timeout triggered. State: ", get_state_string())
+	if battle_state == BattleState.ACTIVE:
+		_advance_wave()
 		_spawn_current_wave()
+	else:
+		print("[BattleManager] Ignoring wave delay timeout because state is not ACTIVE")
 
 func _get_enemies_for_wave(_wave: int) -> int:
 	# Pull strictly from config; no infinite linear scaling
@@ -144,6 +161,7 @@ func _get_enemies_for_wave(_wave: int) -> int:
 func _advance_wave() -> void:
 	current_wave += 1
 	wave_changed.emit(current_wave)
+	print("[BattleManager] 📈 Advanced to wave %d" % current_wave)
 	_check_wave_milestones()
 
 func _check_wave_milestones() -> void:
@@ -185,11 +203,18 @@ func _spawn_enemy() -> void:
 		# Apply stage configuration
 		if not current_stage_config.is_empty() and spawned_enemy.has_method("set_speed_modifier"):
 			var enemy_hp = current_stage_config.get("enemy_hp", 10.0)
-			var velocity_mod = current_stage_config.get("velocity_modifier", 1.0)
+			var velocity_mod = current_stage_config.get("velocity_modifier", 1.0) * enemy_speed_global_modifier
+			var base_speed = current_stage_config.get("enemy_movement_speed", -1.0)
 			
 			spawned_enemy.set("max_hp", enemy_hp)
 			spawned_enemy.set("current_hp", enemy_hp)
 			spawned_enemy.set_speed_modifier(velocity_mod)
+			
+			if base_speed > 0:
+				if "base_speed" in spawned_enemy:
+					spawned_enemy.set("base_speed", base_speed)
+				elif "speed" in spawned_enemy:
+					spawned_enemy.set("speed", base_speed)
 			
 			var archetype = current_stage_config.get("archetype", "The Entry Stream")
 			_apply_archetype_mechanics(spawned_enemy, archetype, enemy_hp)
@@ -210,11 +235,18 @@ func _spawn_enemy() -> void:
 	if not current_stage_config.is_empty():
 		var enemy_hp = current_stage_config.get("enemy_hp", 10.0)
 		var velocity_mod = current_stage_config.get("velocity_modifier", 1.0)
+		var base_speed = current_stage_config.get("enemy_movement_speed", -1.0)
 		
 		enemy.max_hp = enemy_hp
 		enemy.current_hp = enemy_hp
 		if enemy.has_method("set_speed_modifier"):
 			enemy.set_speed_modifier(velocity_mod)
+		
+		if base_speed > 0:
+			if "base_speed" in enemy:
+				enemy.base_speed = base_speed
+			elif "speed" in enemy:
+				enemy.speed = base_speed
 			
 		var archetype = current_stage_config.get("archetype", "The Entry Stream")
 		_apply_archetype_mechanics(enemy, archetype, enemy_hp)
@@ -384,6 +416,7 @@ func register_enemy_reached_target() -> void:
 		_handle_defeat("Heart Limit Reached")
 
 func _handle_defeat(reason: String) -> void:
+	print("[BattleManager] ☠ BATTLE DEFEAT TRIGGERED: ", reason)
 	_set_battle_state(BattleState.DEFEATED)
 	_stage_timer.stop()
 	_spawn_timer.stop()
