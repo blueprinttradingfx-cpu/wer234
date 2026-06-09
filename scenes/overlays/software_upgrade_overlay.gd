@@ -153,6 +153,9 @@ func _get_ad_upgrade() -> Dictionary:
 
 func _on_card_selected(upgrade_type: String, value: float) -> void:
 	selected_upgrade = upgrade_type
+	# Stop timer immediately to prevent auto-selection!
+	if cooldown_timer:
+		cooldown_timer.stop()
 	upgrade_selected.emit(upgrade_type, value)
 	# NOTE: Main battle scene handles cleanup via _close_upgrade_overlay()
 

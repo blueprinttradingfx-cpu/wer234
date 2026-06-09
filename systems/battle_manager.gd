@@ -56,8 +56,8 @@ func _setup_timers() -> void:
 	_wave_delay_timer.timeout.connect(_on_wave_delay_timeout)
 	add_child(_wave_delay_timer)
 
-func start_battle(stage_id: int) -> void:
-	current_wave = 1
+func start_battle(stage_id: int, starting_wave: int = 1) -> void:
+	current_wave = starting_wave
 	alive_enemy_count = 0
 	current_hearts = 0
 	boss_spawned = false

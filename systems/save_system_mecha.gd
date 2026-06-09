@@ -40,6 +40,7 @@ func _create_new_save() -> void:
 		},
 		"progression": {
 			"current_stage": 1,
+			"current_wave": 1,
 			"highest_stage": 1,
 			"total_battles": 0,
 			"victories": 0
@@ -54,8 +55,10 @@ func _create_new_save() -> void:
 		},
 		"upgrades": {
 			"ballistic_core": {},
-			"energy_matrix": {}
-		}
+			"energy_matrix": {},
+			"tactician_protocol": {}
+		},
+		"active_software_effects": []
 	}
 	save_game()
 
@@ -89,6 +92,43 @@ func get_highest_stage() -> int:
 	if _save_data.has("progression"):
 		return _save_data["progression"].get("highest_stage", 1)
 	return 1
+
+func set_current_wave(wave: int) -> void:
+	if not _save_data.has("progression"):
+		_save_data["progression"] = {}
+	_save_data["progression"]["current_wave"] = wave
+	save_game()
+
+func get_current_wave() -> int:
+	if _save_data.has("progression"):
+		return _save_data["progression"].get("current_wave", 1)
+	return 1
+
+func set_active_software_effects(effects: Array) -> void:
+	# Save only what's necessary to restore the effects
+	var saved_effects = []
+	for effect in effects:
+		saved_effects.append({
+			"type": effect.get("type"),
+			"value": effect.get("value"),
+			"remaining_waves": effect.get("remaining_waves"),
+			"multiplier": effect.get("multiplier", 1.0)
+		})
+	print("[SaveSystem] Saving ", saved_effects.size(), " software effects: ", saved_effects)
+	_save_data["active_software_effects"] = saved_effects
+	save_game()
+
+func get_active_software_effects() -> Array:
+	var saved_effects = []
+	if _save_data.has("active_software_effects"):
+		saved_effects = _save_data["active_software_effects"].duplicate()
+	print("[SaveSystem] Loading ", saved_effects.size(), " software effects: ", saved_effects)
+	return saved_effects
+
+func reset_active_software_effects() -> void:
+	print("[SaveSystem] Resetting active software effects!")
+	_save_data["active_software_effects"] = []
+	save_game()
 
 func unlock_mecha(mecha_id: String) -> void:
 	if not mecha_id in _save_data["mechas"]["unlocked_mecha_ids"]:
@@ -126,10 +166,10 @@ func get_tech_credits() -> int:
 
 func set_tech_credits(amount: int) -> void:
 	if not _save_data.has("economy"):
-		_save_data["economy"] = {}
-	_save_data["economy"]["premium_currency"] = 0
-	_save_data["economy"]["tech_credits"] = 0
-	
+		_save_data["economy"] = {
+			"tech_credits": 0,
+			"premium_currency": 0
+		}
 	_save_data["economy"]["tech_credits"] = amount
 	save_game()
 

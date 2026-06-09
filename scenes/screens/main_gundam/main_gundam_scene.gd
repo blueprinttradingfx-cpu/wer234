@@ -62,7 +62,6 @@ var is_game_active: bool = false
 func _ready() -> void:
 	_setup_enemy_spawner()
 	_setup_scene_timers()
-	_setup_upgrade_effect_system()
 	_connect_autoload_signals()
 	_load_initial_upgrades()
 	
@@ -199,6 +198,11 @@ func _start_current_game_session() -> void:
 	var pm = get_node_or_null("/root/ProgressionManager")
 	if pm and "current_player_stage" in pm:
 		current_stage = pm.current_player_stage
+	
+	# Load saved wave
+	var save_sys = get_node_or_null("/root/SaveSystem")
+	if save_sys and save_sys.has_method("get_current_wave"):
+		current_wave = save_sys.get_current_wave()
 		
 	# Update header labels with real values
 	if stage_label:
@@ -218,9 +222,12 @@ func _start_current_game_session() -> void:
 		
 	var bm = get_node_or_null("/root/BattleManager")
 	if bm and bm.has_method("start_battle"):
-		bm.start_battle(current_stage)
+		bm.start_battle(current_stage, current_wave)
 		
 	_instantiate_active_mecha()
+	
+	# Setup upgrade effect system and restore saved effects
+	_setup_upgrade_effect_system()
 	
 	if is_instance_valid(weapon_system): weapon_system.update_weapon_speed()
 	if is_instance_valid(battery_update_timer): battery_update_timer.start()
@@ -423,6 +430,11 @@ func trigger_stage_clear_victory() -> void:
 	if mecha and mecha.has_method("change_base_emotion"):
 		mecha.change_base_emotion(19)
 	
+	# Reset wave for next stage - keep active software effects!
+	var save_sys = get_node_or_null("/root/SaveSystem")
+	if save_sys and save_sys.has_method("set_current_wave"):
+		save_sys.set_current_wave(1)
+	
 	# After a short delay, go back to main menu
 	await get_tree().create_timer(2.0).timeout
 	var game_state = get_node_or_null("/root/GameState")
@@ -441,6 +453,11 @@ func _on_wave_changed(wave: int) -> void:
 	if wave_label: wave_label.text = "[WAVE %d/100]" % wave
 	if stage_label: stage_label.text = "STAGE %d" % current_stage
 	_tick_upgrade_effects_for_wave()
+	
+	# Save current wave
+	var save_sys = get_node_or_null("/root/SaveSystem")
+	if save_sys and save_sys.has_method("set_current_wave"):
+		save_sys.set_current_wave(wave)
 
 func _on_enemy_count_changed(count: int) -> void:
 	alive_enemies_count = count
@@ -498,10 +515,28 @@ func _on_wave_skipped(target_wave: int, multiplier: float) -> void:
 	tween.tween_callback(notif.queue_free)
 
 func _setup_upgrade_effect_system() -> void:
-	if upgrade_effect_system:
-		return
-	upgrade_effect_system = UPGRADE_EFFECT_SYSTEM.new()
-	add_child(upgrade_effect_system)
+	if not upgrade_effect_system:
+		upgrade_effect_system = UPGRADE_EFFECT_SYSTEM.new()
+		add_child(upgrade_effect_system)
+	
+	# Always set context and restore saved effects whenever setup is called!
+	var save_sys = get_node_or_null("/root/SaveSystem")
+	var battle_manager = get_node_or_null("/root/BattleManager")
+	var effect_context = {
+		"weapon_system": weapon_system,
+		"mecha_instance": mecha_instance,
+		"battle_manager": battle_manager
+	}
+	
+	if save_sys and save_sys.has_method("get_active_software_effects"):
+		var saved_effects = save_sys.get_active_software_effects()
+		if saved_effects.size() > 0:
+			print("[MainGameScene] Restoring ", saved_effects.size(), " saved software effects!")
+			upgrade_effect_system.restore_effects_from_save(saved_effects, effect_context)
+		else:
+			upgrade_effect_system.set_context(effect_context)
+	else:
+		upgrade_effect_system.set_context(effect_context)
 
 func _show_upgrade_overlay(wave: int) -> void:
 	var battle_manager = get_node_or_null("/root/BattleManager")

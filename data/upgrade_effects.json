@@ -1,51 +1,61 @@
 {
   "effects": {
     "attack_speed": {
+      "name": "Overclocked Reactor",
       "description": "Increase weapon fire rate for the current run.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "damage_boost": {
+      "name": "Enhanced Ammo",
       "description": "Increase damage output for the current run.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "bullet_velocity": {
+      "name": "Rapid Projectiles",
       "description": "Improve projectile speed. Runtime effect is currently informational.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "shield_boost": {
+      "name": "Energy Shield",
       "description": "Grant shield points that absorb incoming hits.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "missile_cooldown": {
+      "name": "Quick Reload",
       "description": "Reduce missile cooldown for the current run.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "multi_shot": {
+      "name": "Multi-Barrel System",
       "description": "Increase multi-shot level for the current run.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "piercing": {
+      "name": "Piercing Rounds",
       "description": "Increase piercing level for the current run.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "payload_expansion": {
+      "name": "Payload Expansion",
       "description": "Increase missile payload capacity for the current run.",
       "multiplier": 1.0,
       "duration_waves": 0
     },
     "overclock": {
+      "name": "Overclock Protocol",
       "description": "Temporarily boost damage and attack speed for a set number of waves.",
       "multiplier": 1.0,
       "duration_waves": 5
     },
     "tech_credit_boost": {
+      "name": "Credit Booster",
       "description": "Increase tech credit rewards for stage completion.",
       "multiplier": 1.0,
       "duration_waves": 0

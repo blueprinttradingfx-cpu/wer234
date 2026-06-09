@@ -5,9 +5,13 @@ const EFFECTS_PATH: String = "res://data/upgrade_effects.json"
 
 var effect_definitions: Dictionary = {}
 var active_effects: Array = []
+var effect_context: Dictionary = {}
 
 func _init() -> void:
 	_load_effect_definitions()
+
+func set_context(context: Dictionary) -> void:
+	effect_context = context
 
 func _load_effect_definitions() -> void:
 	if not FileAccess.file_exists(EFFECTS_PATH):
@@ -45,14 +49,41 @@ func apply_upgrade(upgrade_type: String, value: float, context: Dictionary) -> v
 
 	_activate_effect(effect)
 
-	if effect["remaining_waves"] > 0:
+	# Add to active_effects regardless of duration_waves, so we can show them in UI!
+	active_effects.append(effect)
+	
+	_save_active_effects()
+
+func restore_effects_from_save(saved_effects: Array, context: Dictionary) -> void:
+	effect_context = context
+	for saved_effect in saved_effects:
+		if not effect_definitions.has(saved_effect.get("type")):
+			continue
+		var definition: Dictionary = effect_definitions[saved_effect.get("type")]
+		var effect: Dictionary = {
+			"type": saved_effect.get("type"),
+			"value": saved_effect.get("value"),
+			"definition": definition,
+			"context": effect_context,
+			"remaining_waves": saved_effect.get("remaining_waves"),
+			"multiplier": saved_effect.get("multiplier", 1.0)
+		}
+		_activate_effect(effect)
 		active_effects.append(effect)
+
+func _save_active_effects() -> void:
+	var save_system = get_node_or_null("/root/SaveSystem")
+	if save_system and save_system.has_method("set_active_software_effects"):
+		save_system.set_active_software_effects(active_effects)
 
 func tick_wave() -> void:
 	for effect in active_effects.duplicate():
-		effect["remaining_waves"] -= 1
-		if effect["remaining_waves"] <= 0:
-			_deactivate_effect(effect)
+		# Only decrease remaining_waves if it has a duration set!
+		if effect["remaining_waves"] > 0:
+			effect["remaining_waves"] -= 1
+			if effect["remaining_waves"] <= 0:
+				_deactivate_effect(effect)
+	_save_active_effects()
 
 func _activate_effect(effect: Dictionary) -> void:
 	var effect_type: String = effect["type"]	

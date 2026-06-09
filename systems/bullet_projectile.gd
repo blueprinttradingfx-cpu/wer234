@@ -66,7 +66,7 @@ func _physics_process(delta: float) -> void:
 			if nearest_enemy:
 				target_node = nearest_enemy
 				target_became_invalid = false  # Reset since we have a new target
-				print("[BulletProjectile] Re-acquired target: %s at %s" % [nearest_enemy.name, nearest_enemy.global_position])
+				#print("[BulletProjectile] Re-acquired target: %s at %s" % [nearest_enemy.name, nearest_enemy.global_position])
 			#else:
 				#print("[BulletProjectile] No valid enemies to re-acquire. Curving lost.")
 	
@@ -80,7 +80,7 @@ func _physics_process(delta: float) -> void:
 	if distance_traveled > max_distance:
 		var target_pos = target_node.global_position if is_instance_valid(target_node) else Vector2.ZERO
 		var target_name = target_node.name if is_instance_valid(target_node) else "NONE"
-		print("[BulletProjectile] MISS (Max Distance) - Bullet at %s, Target %s was at %s. Distance traveled: %.1f" % [global_position, target_name, target_pos, distance_traveled])
+		#print("[BulletProjectile] MISS (Max Distance) - Bullet at %s, Target %s was at %s. Distance traveled: %.1f" % [global_position, target_name, target_pos, distance_traveled])
 		queue_free()
 		return
 
