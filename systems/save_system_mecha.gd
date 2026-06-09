@@ -141,3 +141,14 @@ func deduct_tech_credits(amount: int) -> void:
 	var current = get_tech_credits()
 	var new_amount = max(0, current - amount)
 	set_tech_credits(new_amount)
+
+func set_value(key: String, value: Variant) -> void:
+	if not _save_data.has("settings"):
+		_save_data["settings"] = {}
+	_save_data["settings"][key] = value
+	save_game()
+
+func get_value(key: String, default_value: Variant = null) -> Variant:
+	if _save_data.has("settings") and _save_data["settings"].has(key):
+		return _save_data["settings"][key]
+	return default_value

@@ -14,13 +14,75 @@ var ad_sdk_loaded: bool = false
 var save_system: Node = null
 var progression_manager: Node = null
 var upgrade_card_generator: UpgradeCardGenerator = null
+var cooldown_timer: Timer
+var cooldown_label: Label
+var is_ready: bool = false
+
+func _init() -> void:
+	# Initialize everything in _init() so it's available before _on_enter_tree()
+	print("[SoftwareUpgradeOverlay] _init() called!")
+	upgrade_card_generator = UPGRADE_CARD_GENERATOR.new()
+	
+	# Setup cooldown timer
+	cooldown_timer = Timer.new()
+	cooldown_timer.wait_time = 10.0
+	cooldown_timer.timeout.connect(_on_cooldown_finished)
 
 func _ready() -> void:
+	print("[SoftwareUpgradeOverlay] _ready() called!")
 	save_system = get_node_or_null("/root/SaveSystem")
 	progression_manager = get_node_or_null("/root/ProgressionManager")
-	upgrade_card_generator = UPGRADE_CARD_GENERATOR.new()
+	
+	# Add cooldown timer to tree
+	add_child(cooldown_timer)
+	print("[SoftwareUpgradeOverlay] Cooldown timer added to tree!")
+	
+	# Get cooldown label
+	cooldown_label = get_node_or_null("Container/CooldownLabel")
+	print("[SoftwareUpgradeOverlay] Cooldown label found: ", is_instance_valid(cooldown_label))
+	
 	_build_cards()
 	_connect_signals()
+	is_ready = true
+	
+	# If we're already in the tree, start the timer now
+	if is_inside_tree():
+		print("[SoftwareUpgradeOverlay] Already in tree, starting cooldown timer!")
+		cooldown_timer.start()
+		_update_cooldown_display(10.0)
+
+func _on_enter_tree() -> void:
+	print("[SoftwareUpgradeOverlay] _on_enter_tree() called!")
+	# Reset cooldown when the overlay is shown (if we're ready
+	if is_ready and cooldown_timer:
+		print("[SoftwareUpgradeOverlay] Starting cooldown timer!")
+		cooldown_timer.start()
+		_update_cooldown_display(10.0)
+
+func _process(delta: float) -> void:
+	if cooldown_timer and not cooldown_timer.is_stopped():
+		var remaining = cooldown_timer.time_left
+		_update_cooldown_display(remaining)
+
+func _update_cooldown_display(remaining: float) -> void:
+	if cooldown_label:
+		cooldown_label.text = "NEXT RESET: %d s" % int(ceil(remaining))
+
+func _on_cooldown_finished() -> void:
+	print("[SoftwareUpgradeOverlay] Cooldown finished - randomizing upgrades!")
+	_build_cards()
+	
+	# Auto-select a random upgrade
+	if available_upgrades.size() > 0:
+		var random_index = randi() % available_upgrades.size()
+		var random_upgrade = available_upgrades[random_index]
+		if not random_upgrade.get("is_ad", false):
+			print("[SoftwareUpgradeOverlay] Auto-selecting random upgrade: ", random_upgrade.get("title"))
+			_on_card_selected(random_upgrade.get("type", ""), random_upgrade.get("value", 0.0))
+			return  # Don't restart timer if we auto-selected
+	
+	# If we didn't auto-select (e.g., only ad upgrade available), restart timer
+	cooldown_timer.start()
 
 func _connect_signals() -> void:
 	var re_roll_button = get_node_or_null("Container/ReRollButton")

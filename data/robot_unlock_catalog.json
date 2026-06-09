@@ -4,8 +4,8 @@
       "mecha_id": "mecha_unit_alpha_base",
       "name": "Unit Alpha (Baseline)",
       "unlock_requirement": { "type": "stage_reached", "value": 1 },
-      "base_stats": { "attack_damage": 10.0, "attack_speed": 1.0 },
-      "skill": { "name": "Homing Missiles", "total_damage": 50.0, "cooldown": 10.0 }
+      "base_stats": { "attack_damage": 10.0, "attack_speed": 2.0 },
+      "skill": { "name": "Homing Missiles", "total_damage": 100.0, "cooldown": 10.0 }
     },
     {
       "mecha_id": "mecha_unit_beta_gatling",

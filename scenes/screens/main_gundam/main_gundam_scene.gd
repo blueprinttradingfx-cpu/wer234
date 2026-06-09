@@ -422,6 +422,12 @@ func trigger_stage_clear_victory() -> void:
 	var mecha = gameplay_arena.get_child(0) if gameplay_arena.get_child_count() > 0 else null
 	if mecha and mecha.has_method("change_base_emotion"):
 		mecha.change_base_emotion(19)
+	
+	# After a short delay, go back to main menu
+	await get_tree().create_timer(2.0).timeout
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state:
+		game_state.transition_to_screen(game_state.Screen.MENU)
 
 # --- BattleManager Signal Handlers ---
 func _on_battle_state_changed(new_state: int) -> void:
@@ -442,6 +448,16 @@ func _on_enemy_count_changed(count: int) -> void:
 func _on_stage_time_changed(time_remaining: float) -> void:
 	match_remaining_time = time_remaining
 	if clock_label:
+		var bm = get_node_or_null("/root/BattleManager")
+		var boss_spawned = false
+		if bm and "boss_spawned" in bm:
+			boss_spawned = bm.boss_spawned
+		
+		if not boss_spawned:
+			clock_label.visible = false
+			return
+		
+		clock_label.visible = true
 		var minutes: int = int(match_remaining_time) / 60
 		var seconds: int = int(match_remaining_time) % 60
 		clock_label.text = "DEATH IN %02d:%02d" % [minutes, seconds]
@@ -592,7 +608,12 @@ func _process(delta: float) -> void:
 		return
 
 	# If all enemies have been killed and spawner has completed its waves
-	if alive_enemies_count <= 0 and _all_waves_spawned_completely():
+	# But don't trigger victory if boss is still active!
+	var bm = get_node_or_null("/root/BattleManager")
+	var boss_active = false
+	if bm and "boss_active" in bm:
+		boss_active = bm.boss_active
+	if alive_enemies_count <= 0 and _all_waves_spawned_completely() and not boss_active:
 		trigger_stage_clear_victory()
 
 # Helper validation if tracking total wave progress locally

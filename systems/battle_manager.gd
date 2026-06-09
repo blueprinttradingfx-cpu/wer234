@@ -59,7 +59,6 @@ func _setup_timers() -> void:
 func start_battle(stage_id: int) -> void:
 	current_wave = 1
 	alive_enemy_count = 0
-	stage_time_remaining = 300.0
 	current_hearts = 0
 	boss_spawned = false
 	boss_active = false
@@ -69,9 +68,12 @@ func start_battle(stage_id: int) -> void:
 	var progression = get_node_or_null("/root/ProgressionManager")
 	if progression:
 		current_stage_config = progression.get_config_for_stage(stage_id)
+		stage_time_remaining = current_stage_config.get("boss_timer", 240.0)
+	else:
+		stage_time_remaining = 240.0
 		
 	_set_battle_state(BattleState.ACTIVE)
-	_stage_timer.start()
+	# Stage timer will start when boss spawns
 	
 	_spawn_current_wave()
 	
@@ -100,6 +102,8 @@ func _spawn_current_wave() -> void:
 			boss_spawned = true
 			boss_active = true
 			_spawn_timer.stop()
+			# Start stage timer when boss spawns
+			_stage_timer.start()
 		return
 		
 	total_expected_this_wave = _get_enemies_for_wave(current_wave)
@@ -353,12 +357,14 @@ func pause_battle() -> void:
 		_set_battle_state(BattleState.PAUSED)
 		_stage_timer.paused = true
 		_spawn_timer.paused = true
+		_wave_delay_timer.paused = true
 
 func resume_battle() -> void:
 	if battle_state == BattleState.PAUSED:
 		_set_battle_state(BattleState.ACTIVE)
 		_stage_timer.paused = false
 		_spawn_timer.paused = false
+		_wave_delay_timer.paused = false
 
 func register_enemy_destruction() -> void:
 	register_enemy_destroyed()

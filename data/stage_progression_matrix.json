@@ -21,141 +21,151 @@
           "stage_id": 1,
           "stage_name": "Database Sector 0-Alpha",
           "archetype": "The Entry Stream",
-          "boss_hp": 700.0,
+          "boss_hp": 1500.0,
           "enemies_per_wave": 10,
           "velocity_modifier": 1.0,
           "data_skip_multiplier": 1,
-          "enemy_hp": 30.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.75,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 2,
           "stage_name": "Database Sector 0-Beta",
           "archetype": "The Rush Protocol",
-          "boss_hp": 390.0,
+          "boss_hp": 4000.0,
           "enemies_per_wave": 14,
           "velocity_modifier": 1.35,
           "data_skip_multiplier": 2,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 3,
           "stage_name": "Database Sector 0-Gamma",
           "archetype": "Shielded Packets",
-          "boss_hp": 550.0,
+          "boss_hp": 10000.0,
           "enemies_per_wave": 16,
           "velocity_modifier": 1.0,
           "data_skip_multiplier": 2,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 4,
           "stage_name": "Database Sector 0-Delta",
           "archetype": "Splitting Malware",
-          "boss_hp": 700.0,
+          "boss_hp": 50000.0,
           "enemies_per_wave": 12,
           "velocity_modifier": 1.0,
           "data_skip_multiplier": 3,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 5,
           "stage_name": "Database Sector 0-Epsilon",
           "archetype": "The EMP Jammer",
-          "boss_hp": 950.0,
+          "boss_hp": 250000.0,
           "enemies_per_wave": 18,
           "velocity_modifier": 1.5,
           "data_skip_multiplier": 3,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 6,
           "stage_name": "Database Sector 0-Zeta",
           "archetype": "Re-routing Logic",
-          "boss_hp": 1200.0,
+          "boss_hp": 500000.0,
           "enemies_per_wave": 20,
           "velocity_modifier": 1.6,
           "data_skip_multiplier": 4,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 7,
           "stage_name": "Database Sector 0-Eta",
           "archetype": "Regenerative Stream",
-          "boss_hp": 1600.0,
+          "boss_hp": 75000.0,
           "enemies_per_wave": 22,
           "velocity_modifier": 1.0,
           "data_skip_multiplier": 4,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 8,
           "stage_name": "Database Sector 0-Theta",
           "archetype": "Swarm Carrier",
-          "boss_hp": 2200.0,
+          "boss_hp": 100000.0,
           "enemies_per_wave": 5,
           "velocity_modifier": 1.0,
           "data_skip_multiplier": 5,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 9,
           "stage_name": "Database Sector 0-Iota",
           "archetype": "The Phantom Grid",
-          "boss_hp": 3000.0,
+          "boss_hp": 3000000.0,
           "enemies_per_wave": 25,
           "velocity_modifier": 1.75,
           "data_skip_multiplier": 5,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 10,
           "stage_name": "Database Sector 9-Alpha",
           "archetype": "The Final Meltdown",
-          "boss_hp": 4500.0,
+          "boss_hp": 10000000.0,
           "enemies_per_wave": 30,
           "velocity_modifier": 2.0,
           "data_skip_multiplier": 6,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         }
       ]
     },
@@ -175,11 +185,12 @@
           "enemies_per_wave": 14,
           "velocity_modifier": 1.2,
           "data_skip_multiplier": 2,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 20,
@@ -189,11 +200,12 @@
           "enemies_per_wave": 34,
           "velocity_modifier": 2.2,
           "data_skip_multiplier": 6,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         }
       ]
     },
@@ -213,11 +225,12 @@
           "enemies_per_wave": 16,
           "velocity_modifier": 1.4,
           "data_skip_multiplier": 2,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         },
         {
           "stage_id": 30,
@@ -227,11 +240,12 @@
           "enemies_per_wave": 38,
           "velocity_modifier": 2.4,
           "data_skip_multiplier": 6,
-          "enemy_hp": 10.0,
+          "enemy_hp": 20.0,
           "spawn_interval": 0.5,
           "wave_delay": 2.0,
           "total_waves": 100,
-          "enemy_movement_speed": 35.0
+          "enemy_movement_speed": 35.0,
+          "boss_timer": 240.0
         }
       ]
     }

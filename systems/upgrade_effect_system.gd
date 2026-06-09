@@ -78,11 +78,11 @@ func _activate_effect(effect: Dictionary) -> void:
 				battle_manager.add_shield_points(int(value))
 		"missile_cooldown":
 			if mecha_instance:
-				mecha_instance.missile_cooldown = max(0.5, mecha_instance.missile_cooldown + value)
-				if mecha_instance.has_node("missile_timer"):
-					var timer = mecha_instance.get_node("missile_timer")
+				mecha_instance.missile_battery_cooldown = max(0.5, mecha_instance.missile_battery_cooldown + value)
+				if mecha_instance.has_node("missile_cooldown_timer"):
+					var timer = mecha_instance.get_node("missile_cooldown_timer")
 					if timer is Timer:
-						timer.wait_time = mecha_instance.missile_cooldown
+						timer.wait_time = mecha_instance.missile_battery_cooldown
 				print("[UpgradeEffectSystem] Applied missile cooldown adjustment: %.2fs" % value)
 		"multi_shot":
 			if weapon_system:

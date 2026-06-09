@@ -53,7 +53,7 @@ func _on_fire_timer_timeout() -> void:
 	if target_enemies.is_empty():
 		return # Idle state: No enemies within screen boundaries
 	
-	print("[WeaponSystem] FIRE | attack_speed=", attack_speed, " | fire_interval=", fire_timer.wait_time, "s | base_damage=", base_damage)
+	#print("[WeaponSystem] FIRE | attack_speed=", attack_speed, " | fire_interval=", fire_timer.wait_time, "s | base_damage=", base_damage)
 	execute_firing_sequence(target_enemies)
 
 ## Scans the screen context to return valid targets sorted by closest distance

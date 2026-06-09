@@ -67,8 +67,8 @@ func _physics_process(delta: float) -> void:
 				target_node = nearest_enemy
 				target_became_invalid = false  # Reset since we have a new target
 				print("[BulletProjectile] Re-acquired target: %s at %s" % [nearest_enemy.name, nearest_enemy.global_position])
-			else:
-				print("[BulletProjectile] No valid enemies to re-acquire. Curving lost.")
+			#else:
+				#print("[BulletProjectile] No valid enemies to re-acquire. Curving lost.")
 	
 	global_position += direction_vector * speed * delta
 	

@@ -78,6 +78,30 @@ text = "RESET PROGRESS"
 layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
 
+[node name="TargetLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "TARGET PRIORITY:"
+horizontal_alignment = 1
+
+[node name="TargetOptionButton" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+item_count = 3
+selected = 0
+popup/item_0/text = "Nearest"
+popup/item_0/id = 0
+popup/item_1/text = "Lowest HP (Weakest)"
+popup/item_1/id = 1
+popup/item_2/text = "Strongest"
+popup/item_2/id = 2
+
+[node name="Spacer3" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 20)
+
 [node name="TelemetryButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 80)
