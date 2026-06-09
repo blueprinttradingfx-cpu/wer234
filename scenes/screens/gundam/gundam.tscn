@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c74y10dxfbo06" path="res://assets/gundam/base.png" id="2_vbpaa"]
 [ext_resource type="Texture2D" uid="uid://bjt88a0y58rrc" path="res://assets/ui/RReyes.png" id="3_ctydi"]
 [ext_resource type="Texture2D" uid="uid://bn3s3tnrq6mvo" path="res://assets/ui/Rmouth.png" id="4_axn6p"]
+[ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="5_ctydi"]
 
 [node name="GundamMecha" type="Node2D" unique_id=345964155]
 position = Vector2(518, 995)
@@ -99,3 +100,9 @@ scale = Vector2(0.28, 0.31)
 texture = ExtResource("2_vbpaa")
 region_enabled = true
 region_rect = Rect2(1067.1719, 103.90791, 107.25, 221.17134)
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1910943852]
+z_index = -2
+position = Vector2(31.000015, -31.499916)
+scale = Vector2(1.40625, 1.4062958)
+texture = ExtResource("5_ctydi")

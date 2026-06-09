@@ -16,6 +16,8 @@ script = ExtResource("1")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=246795653]
 modulate = Color(1, 0.2, 0.2, 1)
+position = Vector2(-3.8146973e-06, -1.4999981)
+scale = Vector2(0.5, 0.637)
 texture = SubResource("AtlasTexture_vyscm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=378075492]
