@@ -265,8 +265,10 @@ func _spawn_payload_enemy() -> void:
 	var offset = Vector2(randf_range(-30, 30), randf_range(-30, 30))
 	payload.global_position = global_position + offset
 	
-	# Add to scene tree
-	get_tree().current_scene.add_child(payload)
+	# Add to scene tree (deferred)
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		current_scene.call_deferred("add_child", payload)
 	
 	# Connect to destroyed signal for proper cleanup
 	payload.destroyed.connect(_on_child_destroyed)
@@ -351,25 +353,25 @@ func enable_cloak(duration: float = 3.0, cooldown: float = 5.0) -> void:
 func execute_destruction() -> void:
 	# Handle splitting before destruction
 	if can_split and split_depth < max_split_depth:
-		_spawn_split_children()
+		_spawn_split_children.call_deferred()
 	
 	# Handle EMP pulse before destruction
 	if has_emp and emp_on_death:
 		_trigger_emp_pulse()
 	
 	# Handshake validation to prevent dual-frame reporting errors
-	remove_from_group("enemies")
+	remove_from_group.call_deferred("enemies")
 	
 	if battle_manager and battle_manager.has_method("register_enemy_destruction"):
-		battle_manager.register_enemy_destruction()
+		battle_manager.register_enemy_destruction.call_deferred()
 	
-	destroyed.emit()
+	destroyed.emit.call_deferred()
 	
 	# Clean up the PathFollow2D wrapper if it exists to preserve memory
 	if follower_node and is_instance_valid(follower_node):
-		follower_node.queue_free()
+		follower_node.queue_free.call_deferred()
 	else:
-		queue_free()
+		queue_free.call_deferred()
 
 
 func _spawn_split_children() -> void:
@@ -393,8 +395,10 @@ func _spawn_split_children() -> void:
 		var offset = Vector2(randf_range(-20, 20), randf_range(-20, 20))
 		child.global_position = global_position + offset
 		
-		# Add to scene tree
-		get_tree().current_scene.add_child(child)
+		# Add to scene tree (deferred to avoid physics flush errors)
+		var current_scene = get_tree().current_scene
+		if current_scene:
+			current_scene.call_deferred("add_child", child)
 		
 		# Connect to destroyed signal for proper cleanup
 		child.destroyed.connect(_on_child_destroyed)

@@ -88,6 +88,7 @@ func take_damage(amount: float) -> void:
 		execute_destruction()
 
 func execute_destruction() -> void:
+	print("[BossUnit] execute_destruction CALLED!")
 	# Handshake validation to prevent dual-frame reporting errors
 	remove_from_group("enemies")
 	remove_from_group("boss")
@@ -95,10 +96,8 @@ func execute_destruction() -> void:
 	if battle_manager and battle_manager.has_method("register_enemy_destroyed"):
 		battle_manager.register_enemy_destroyed()
 	
-	if battle_manager and battle_manager.has_method("on_boss_defeated"):
-		battle_manager.on_boss_defeated()
-	
 	destroyed.emit()
+	print("[BossUnit] destroyed signal emitted!")
 	
 	# Trigger boss explosion visual systems here before freeing memory
 	queue_free()

@@ -130,6 +130,7 @@ func _on_footer_btn_pressed(scene_path: String) -> void:
 		push_warning("Scene not found: " + scene_path)
 
 func _setup_enemy_spawner() -> void:
+	print("[MainGameScene] _setup_enemy_spawner CALLED!")
 	spawner_node = get_node_or_null("EnemySpawner")
 	if not spawner_node:
 		print("🚀 EnemySpawner node not found in scene tree. Creating dynamically...")
@@ -145,6 +146,7 @@ func _setup_enemy_spawner() -> void:
 		var bm = get_node_or_null("/root/BattleManager")
 		if bm:
 			bm.set("custom_spawner", spawner_node)
+			print("[MainGameScene] Set custom_spawner in BattleManager!")
 	
 	# Inject direct references so the spawner never needs fragile node path lookups
 	if spawner_node:
@@ -222,11 +224,17 @@ func _load_initial_upgrades() -> void:
 func _start_current_game_session() -> void:
 	is_game_active = true
 	var pm = get_node_or_null("/root/ProgressionManager")
-	if pm and "current_player_stage" in pm:
+	var save_sys = get_node_or_null("/root/SaveSystem")
+	
+	# Load saved stage from SaveSystem first, then sync to ProgressionManager
+	if save_sys and save_sys.has_method("get_current_stage"):
+		current_stage = save_sys.get_current_stage()
+		if pm and "current_player_stage" in pm:
+			pm.current_player_stage = current_stage
+	elif pm and "current_player_stage" in pm:
 		current_stage = pm.current_player_stage
 	
 	# Load saved wave
-	var save_sys = get_node_or_null("/root/SaveSystem")
 	if save_sys and save_sys.has_method("get_current_wave"):
 		current_wave = save_sys.get_current_wave()
 		
@@ -447,25 +455,45 @@ func trigger_system_overflow_failure(reason: String = "Stage Overflow") -> void:
 	_show_game_over_overlay(overlay_text)
 
 func trigger_stage_clear_victory() -> void:
+	print("🏆 STAGE CLEAR VICTORY: Operational sector stabilized.")
+	
+	# Increment stage!
+	var pm = get_node_or_null("/root/ProgressionManager")
+	var new_stage = current_stage + 1
+	if pm and "current_player_stage" in pm:
+		pm.current_player_stage = new_stage
+		print("[MainGameScene] Advanced to stage %d" % pm.current_player_stage)
+	
+	# Save progress!
+	var save_sys = get_node_or_null("/root/SaveSystem")
+	if save_sys:
+		if save_sys.has_method("set_current_wave"):
+			save_sys.set_current_wave(1)
+		if save_sys.has_method("update_stage_progression"):
+			save_sys.update_stage_progression(new_stage)
+	
+	# Clean up current game
 	is_game_active = false
 	if is_instance_valid(weapon_system): weapon_system.fire_timer.stop()
 	if is_instance_valid(battery_update_timer): battery_update_timer.stop()
 	
-	print("🏆 STAGE CLEAR VICTORY: Operational sector stabilized.")
-	var mecha = gameplay_arena.get_child(0) if gameplay_arena.get_child_count() > 0 else null
-	if mecha and mecha.has_method("change_base_emotion"):
-		mecha.change_base_emotion(19)
+	# Clean up old enemies
+	var enemies = get_tree().get_nodes_in_group("enemies")
+	for enemy in enemies:
+		if is_instance_valid(enemy) and is_instance_valid(enemy.get_parent()):
+			enemy.get_parent().remove_child(enemy)
+			enemy.queue_free()
 	
-	# Reset wave for next stage - keep active software effects!
-	var save_sys = get_node_or_null("/root/SaveSystem")
-	if save_sys and save_sys.has_method("set_current_wave"):
-		save_sys.set_current_wave(1)
+	# Clean up old mech
+	if mecha_instance and is_instance_valid(mecha_instance):
+		mecha_instance.queue_free()
+		mecha_instance = null
 	
-	# After a short delay, go back to main menu
-	await get_tree().create_timer(2.0).timeout
-	var game_state = get_node_or_null("/root/GameState")
-	if game_state:
-		game_state.transition_to_screen(game_state.Screen.MENU)
+	# Reset UI and start new stage!
+	await get_tree().create_timer(0.5).timeout
+	current_stage = new_stage
+	current_wave = 1
+	_start_current_game_session()
 
 # --- BattleManager Signal Handlers ---
 func _on_battle_state_changed(new_state: int) -> void:
@@ -510,6 +538,7 @@ func _on_stage_time_changed(time_remaining: float) -> void:
 			clock_label.modulate = Color.WHITE
 
 func _on_battle_victory() -> void:
+	print("[MainGameScene] _on_battle_victory CALLED!")
 	trigger_stage_clear_victory()
 
 func _on_battle_defeat(reason: String) -> void:
@@ -598,6 +627,7 @@ func _close_upgrade_overlay() -> void:
 	var battle_manager = get_node_or_null("/root/BattleManager")
 	if battle_manager:
 		battle_manager.resume_battle()
+	Engine.time_scale = 1.0
 
 func _on_upgrade_selected(upgrade_type: String, value: float) -> void:
 	print("[MainGameScene] Upgrade selected: %s (%.2f)" % [upgrade_type, value])
@@ -668,19 +698,14 @@ func _process(delta: float) -> void:
 	if match_remaining_time <= 0:
 		return
 
-	# If all enemies have been killed and spawner has completed its waves
-	# But don't trigger victory if boss is still active!
-	var bm = get_node_or_null("/root/BattleManager")
-	var boss_active = false
-	if bm and "boss_active" in bm:
-		boss_active = bm.boss_active
-	if alive_enemies_count <= 0 and _all_waves_spawned_completely() and not boss_active:
-		trigger_stage_clear_victory()
-
 # Helper validation if tracking total wave progress locally
 func _all_waves_spawned_completely() -> bool:
-	# Replace with your wave condition layout if applicable (e.g. current_wave >= total_waves)
-	return current_wave >= 100
+	var bm = get_node_or_null("/root/BattleManager")
+	var total_waves = 100
+	if bm and "current_stage_config" in bm:
+		total_waves = bm.current_stage_config.get("total_waves", 100)
+	var all_spawned = current_wave >= total_waves
+	return all_spawned
 
 # --- Game Over Overlay ---
 func _show_game_over_overlay(reason: String) -> void:
@@ -718,10 +743,13 @@ func _close_game_over_overlay() -> void:
 
 func _on_game_over_retry() -> void:
 	_close_game_over_overlay()
+	Engine.time_scale = 1.0
 	get_tree().reload_current_scene()
 
 func _on_game_over_quit() -> void:
+	print("[MainGameScene] _on_game_over_quit() CALLED!")
 	_close_game_over_overlay()
+	Engine.time_scale = 1.0
 	# Return to main menu or quit
 	var main_menu_path = "res://scenes/screens/main_menu.tscn"
 	if ResourceLoader.exists(main_menu_path):
@@ -761,3 +789,4 @@ func _on_settings_resume() -> void:
 	var battle_manager = get_node_or_null("/root/BattleManager")
 	if battle_manager:
 		battle_manager.resume_battle()
+	Engine.time_scale = 1.0

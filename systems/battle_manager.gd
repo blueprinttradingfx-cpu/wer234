@@ -56,7 +56,33 @@ func _setup_timers() -> void:
 	_wave_delay_timer.timeout.connect(_on_wave_delay_timeout)
 	add_child(_wave_delay_timer)
 
+func reset() -> void:
+	print("[BattleManager] reset CALLED!")
+	current_stage_config = {}
+	current_wave = 1
+	alive_enemy_count = 0
+	stage_time_remaining = 300.0
+	battle_state = BattleState.IDLE
+	max_heart_limit = 50
+	current_hearts = 0
+	boss_spawned = false
+	boss_active = false
+	shield_points = 0
+	credit_gain_multiplier = 1.0
+	total_expected_this_wave = 0
+	total_spawned_this_wave = 0
+	current_wave_start_time = 0.0
+	# DO NOT reset custom_spawner here! The main scene sets it up!
+	if _stage_timer:
+		_stage_timer.stop()
+	if _spawn_timer:
+		_spawn_timer.stop()
+	if _wave_delay_timer:
+		_wave_delay_timer.stop()
+
 func start_battle(stage_id: int, starting_wave: int = 1) -> void:
+	print("[BattleManager] start_battle CALLED with stage_id=%d, starting_wave=%d" % [stage_id, starting_wave])
+	reset()
 	current_wave = starting_wave
 	alive_enemy_count = 0
 	current_hearts = 0
@@ -68,9 +94,11 @@ func start_battle(stage_id: int, starting_wave: int = 1) -> void:
 	var progression = get_node_or_null("/root/ProgressionManager")
 	if progression:
 		current_stage_config = progression.get_config_for_stage(stage_id)
+		print("[BattleManager] Got stage config: ", current_stage_config)
 		stage_time_remaining = current_stage_config.get("boss_timer", 240.0)
 	else:
 		stage_time_remaining = 240.0
+	print("[BattleManager] custom_spawner is: ", custom_spawner)
 		
 	_set_battle_state(BattleState.ACTIVE)
 	# Stage timer will start when boss spawns
@@ -397,6 +425,7 @@ func _spawn_boss() -> void:
 	print("[BattleManager] Boss spawned at wave %s" % current_wave)
 
 func _on_boss_defeated() -> void:
+	print("[BattleManager] _on_boss_defeated CALLED!")
 	boss_active = false
 	print("[BattleManager] Boss defeated - triggering stage completion")
 	_handle_victory()
@@ -439,6 +468,7 @@ func _handle_defeat(reason: String) -> void:
 	battle_defeat.emit(reason)
 
 func _handle_victory() -> void:
+	print("[BattleManager] _handle_victory CALLED!")
 	_set_battle_state(BattleState.VICTORY)
 	_stage_timer.stop()
 	_spawn_timer.stop()
@@ -454,7 +484,9 @@ func _handle_victory() -> void:
 	var progression = get_node_or_null("/root/ProgressionManager")
 	if progression:
 		progression.advance_stage()
+		print("[BattleManager] Called progression.advance_stage()")
 		
+	print("[BattleManager] Emitting battle_victory signal!")
 	battle_victory.emit()
 
 func add_shield_points(amount: int) -> void:

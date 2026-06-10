@@ -1,6 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://boss_unit"]
+[gd_scene format=3 uid="uid://bjrd5kgajjebc"]
 
-[ext_resource type="Script" path="res://systems/boss_unit.gd" id="1_boss_unit"]
+[ext_resource type="Script" uid="uid://bpkstosxg2d24" path="res://systems/boss_unit.gd" id="1_boss_unit"]
+[ext_resource type="Texture2D" uid="uid://elnemkp3jvc2" path="res://assets/ui/enemies.png" id="2_6j0ib"]
 
-[node name="BossUnit" type="CharacterBody2D"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_roval"]
+atlas = ExtResource("2_6j0ib")
+region = Rect2(65, 550, 250, 195)
+
+[node name="BossUnit" type="CharacterBody2D" unique_id=301611479]
 script = ExtResource("1_boss_unit")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=738122831]
+texture = SubResource("AtlasTexture_roval")

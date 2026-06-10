@@ -1,8 +1,6 @@
 [gd_scene format=3 uid="uid://j8lal0m1n2o3"]
 
 [ext_resource type="Script" path="res://scenes/screens/main_menu.gd" id="1_main"]
-[ext_resource type="PackedScene" uid="uid://ewj8vpqidlni" path="res://scenes/common/top_app_bar.tscn" id="2_top"]
-[ext_resource type="PackedScene" uid="uid://c2d3e4f5g6h7" path="res://scenes/common/bottom_nav.tscn" id="3_bottom"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -29,7 +27,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TopAppBar" parent="RootLayout/SafeArea" instance=ExtResource("2_top")]
+[node name="TopAppBar" type="Control" parent="RootLayout/SafeArea"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
 
 [node name="MainContent" type="Control" parent="RootLayout/SafeArea"]
 layout_mode = 1
@@ -39,7 +42,7 @@ anchor_bottom = 1.0
 offset_left = 0.0
 offset_top = 60.0
 offset_right = 0.0
-offset_bottom = -80.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -63,6 +66,7 @@ text = "MECHA DEFENSE"
 horizontal_alignment = 1
 
 [node name="StageLabel" type="Label" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Stage 1 — Launch Sector"
 horizontal_alignment = 1
@@ -73,6 +77,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 50)
 
 [node name="StartButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(400, 80)
 text = "⚔️ START BATTLE"
@@ -82,6 +87,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
 
 [node name="HangarButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(400, 80)
 text = "⚙️ HANGAR"
@@ -91,6 +97,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
 
 [node name="UpgradesButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(400, 80)
 text = "🔧 UPGRADES"
@@ -100,8 +107,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 20)
 
 [node name="ShopButton" type="Button" parent="RootLayout/SafeArea/MainContent/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(400, 80)
 text = "🛒 SHOP"
-
-[node name="BottomNav" parent="RootLayout/SafeArea" instance=ExtResource("3_bottom")]

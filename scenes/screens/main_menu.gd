@@ -1,10 +1,6 @@
 extends Control
 class_name MainMenu
 
-# --- @onready - instanced scenes ($) ---
-@onready var top_appbar: Control = $RootLayout/SafeArea/TopAppBar
-@onready var bottom_nav: Control = $RootLayout/SafeArea/BottomNav
-
 # --- @onready - plain nodes (%) ---
 @onready var start_button: Button = %StartButton
 @onready var stage_label: Label = %StageLabel
@@ -40,13 +36,6 @@ func _connect_signals() -> void:
 		upgrades_button.pressed.connect(_on_upgrades_pressed)
 	if shop_button:
 		shop_button.pressed.connect(_on_shop_pressed)
-	
-	if top_appbar and top_appbar.has_method("set_title"):
-		top_appbar.set_title("MECHA DEFENSE")
-		top_appbar.show_back_button(false)
-	
-	if bottom_nav and bottom_nav.has_method("set_active"):
-		bottom_nav.set_active("Home")
 
 func _on_start_pressed() -> void:
 	if game_state:
