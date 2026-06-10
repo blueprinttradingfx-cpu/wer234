@@ -88,11 +88,37 @@ func _connect_ui_buttons() -> void:
 	if matrix_btn: matrix_btn.pressed.connect(_on_software_powerup_pressed)
 	if overclock_btn: overclock_btn.pressed.connect(_on_software_powerup_pressed)
 	
-	if shop_btn: shop_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/shop_screen.tscn"))
-	if hangar_btn: hangar_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/hangar_screen.tscn"))
-	if upgrades_btn: upgrades_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/upgrades_screen.tscn"))
-	if battle_pass_btn: battle_pass_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/battle_pass_screen.tscn"))
-	if leaderboard_btn: leaderboard_btn.pressed.connect(_on_footer_btn_pressed.bind("res://scenes/screens/leaderboard_screen.tscn"))
+	if shop_btn: shop_btn.pressed.connect(_on_menu_button_pressed.bind("res://scenes/screens/shop_screen.tscn"))
+	if hangar_btn: hangar_btn.pressed.connect(_on_menu_button_pressed.bind("res://scenes/screens/hangar_screen.tscn"))
+	if upgrades_btn: upgrades_btn.pressed.connect(_on_menu_button_pressed.bind("res://scenes/screens/upgrades_screen.tscn"))
+	if battle_pass_btn: battle_pass_btn.pressed.connect(_on_menu_button_pressed.bind("res://scenes/screens/battle_pass_screen.tscn"))
+	if leaderboard_btn: leaderboard_btn.pressed.connect(_on_menu_button_pressed.bind("res://scenes/screens/leaderboard_screen.tscn"))
+
+
+func _on_menu_button_pressed(scene_path: String) -> void:
+	# 1. Safely slow down the gameplay arena simulation instead of breaking timers
+	var battle_manager = get_node_or_null("/root/BattleManager")
+	if battle_manager and battle_manager.has_method("pause_battle"):
+		battle_manager.pause_battle()
+	else:
+		# If you don't have a custom manager method, use standard Engine time_scale.
+		# Setting this to 0.0 freezes physics & timers safely without stopping UI processing!
+		Engine.time_scale = 0.0
+
+	# 2. Instantiate and mount your menu view layer
+	var menu_scene = load(scene_path)
+	if menu_scene:
+		var menu_instance = menu_scene.instantiate()
+		if menu_instance.has_method("set_overlay_mode"):
+			menu_instance.set_overlay_mode(true)
+		
+		# Ensure it renders above gameplay
+		var canvas = get_node_or_null("CanvasLayer")
+		if canvas:
+			canvas.add_child(menu_instance)
+		else:
+			print("menu_instance fallback")
+			add_child(menu_instance) # Fallback to root if CanvasLayer doesn't exist
 
 func _on_software_powerup_pressed() -> void:
 	_show_upgrade_overlay(current_wave)

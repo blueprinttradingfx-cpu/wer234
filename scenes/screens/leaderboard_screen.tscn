@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b28pqp4v72k9"]
 
-[ext_resource type="Script" uid="uid://e1oskpbv2n5j" path="res://scenes/screens/leaderboard_screen.gd" id="1_script"]
+[ext_resource type="Script"  path="res://scenes/screens/leaderboard_screen.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="2_bg"]
 
 [node name="LeaderboardScreen" type="Control"]

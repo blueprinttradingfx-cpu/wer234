@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://deb7p453ta7s6"]
 
-[ext_resource type="Script" uid="uid://dx454yf06ri50" path="res://scenes/screens/upgrades_screen.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/screens/upgrades_screen.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="2_bg"]
 
 [node name="UpgradesScreen" type="Control" unique_id=748263904]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c8y7xp2v12k9"]
 
-[ext_resource type="Script" uid="uid://b2oskpbv1n5j" path="res://scenes/screens/hangar_screen.gd" id="1_script"]
+[ext_resource type="Script" path="res://scenes/screens/hangar_screen.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://7dregtvgiw3o" path="res://assets/ui/bg.png" id="2_bg"]
 
 [node name="HangarScreen" type="Control"]

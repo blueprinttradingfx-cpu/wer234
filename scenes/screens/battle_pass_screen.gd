@@ -9,6 +9,8 @@ extends Control
 var current_level: int = 4
 var current_xp: int = 450
 var xp_per_level: int = 1000
+# Add a variable to track if this menu was opened from inside a running game
+var is_overlay: bool = false
 
 var pass_timeline: Array = [
 	{"level": 1, "free_reward": "500 Credits", "premium_reward": "Alloy Plate Frame", "claimed": true},
@@ -96,5 +98,23 @@ func _on_claim_triggered(level_id: int) -> void:
 			break
 	_populate_rewards_timeline()
 
+func set_overlay_mode(value: bool) -> void:
+	is_overlay = value
+	# If running as an overlay, change the footer button text to read "RESUME" or "BACK"
+	if is_overlay and has_node("%CloseButton"):
+		%CloseButton.text = "RESUME RUN"
+
 func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/screens/main_gundam/main_gundam_scene.tscn")
+	if is_overlay:
+		# Unpause your battle engine safely
+		var battle_manager = get_node_or_null("/root/BattleManager")
+		if battle_manager:
+			battle_manager.resume_battle()
+		else:
+			get_tree().paused = false
+			
+		# Remove this menu layer completely, revealing the underlying main scene perfectly intact!
+		queue_free()
+	else:
+		# Fallback fallback if opened cleanly from a static Main Menu asset frame
+		get_tree().change_scene_to_file("res://scenes/screens/main_gundam/main_gundam_scene.tscn")

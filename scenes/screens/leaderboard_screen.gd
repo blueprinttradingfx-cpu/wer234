@@ -17,6 +17,8 @@ var global_rankings: Array = [
 	{"rank": 5, "name": "MechaPilot_X", "score": "Stage 28", "is_top": false},
 	{"rank": 6, "name": "Aegis_Striker", "score": "Stage 22", "is_top": false}
 ]
+# Add a variable to track if this menu was opened from inside a running game
+var is_overlay: bool = false
 
 func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
@@ -82,5 +84,23 @@ func _populate_leaderboard_rows() -> void:
 			s_lbl.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
 		h_layout.add_child(s_lbl)
 
+func set_overlay_mode(value: bool) -> void:
+	is_overlay = value
+	# If running as an overlay, change the footer button text to read "RESUME" or "BACK"
+	if is_overlay and has_node("%CloseButton"):
+		%CloseButton.text = "RESUME RUN"
+
 func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/screens/main_gundam/main_gundam_scene.tscn")
+	if is_overlay:
+		# Unpause your battle engine safely
+		var battle_manager = get_node_or_null("/root/BattleManager")
+		if battle_manager:
+			battle_manager.resume_battle()
+		else:
+			get_tree().paused = false
+			
+		# Remove this menu layer completely, revealing the underlying main scene perfectly intact!
+		queue_free()
+	else:
+		# Fallback fallback if opened cleanly from a static Main Menu asset frame
+		get_tree().change_scene_to_file("res://scenes/screens/main_gundam/main_gundam_scene.tscn")
