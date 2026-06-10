@@ -41,6 +41,8 @@ func _create_new_save() -> void:
 		"progression": {
 			"current_stage": 1,
 			"current_wave": 1,
+			"restart_wave": 1,  # New: wave to start at after defeat
+			"completed_upgrade_milestones": [],  # New: waves where upgrade was already given
 			"highest_stage": 1,
 			"total_battles": 0,
 			"victories": 0
@@ -60,6 +62,40 @@ func _create_new_save() -> void:
 		},
 		"active_software_effects": []
 	}
+	save_game()
+
+func set_restart_wave(wave: int) -> void:
+	if not _save_data.has("progression"):
+		_save_data["progression"] = {}
+	_save_data["progression"]["restart_wave"] = max(1, wave)  # Can't be less than 1
+	print("[SaveSystem] Set restart wave to: ", _save_data["progression"]["restart_wave"])
+	save_game()
+
+func get_restart_wave() -> int:
+	if _save_data.has("progression"):
+		return _save_data["progression"].get("restart_wave", 1)
+	return 1
+
+func add_completed_upgrade_milestone(wave: int) -> void:
+	if not _save_data.has("progression"):
+		_save_data["progression"] = {}
+	if not _save_data["progression"].has("completed_upgrade_milestones"):
+		_save_data["progression"]["completed_upgrade_milestones"] = []
+	if not wave in _save_data["progression"]["completed_upgrade_milestones"]:
+		_save_data["progression"]["completed_upgrade_milestones"].append(wave)
+		print("[SaveSystem] Added completed upgrade milestone for wave: ", wave)
+		save_game()
+
+func get_completed_upgrade_milestones() -> Array:
+	if _save_data.has("progression"):
+		return _save_data["progression"].get("completed_upgrade_milestones", [])
+	return []
+
+func reset_completed_upgrade_milestones() -> void:
+	if not _save_data.has("progression"):
+		_save_data["progression"] = {}
+	_save_data["progression"]["completed_upgrade_milestones"] = []
+	print("[SaveSystem] Reset completed upgrade milestones!")
 	save_game()
 
 func reset_progress() -> void:

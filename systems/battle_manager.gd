@@ -410,14 +410,32 @@ func _spawn_boss() -> void:
 		var boss_hp = current_stage_config.get("boss_hp", 100.0)
 		boss.set_boss_hp(boss_hp)
 	
-	# Spawn boss at top of screen
-	var viewport = get_viewport()
-	if viewport:
-		var viewport_size = viewport.get_visible_rect().size
-		boss.global_position = Vector2(viewport_size.x / 2.0, -100)
+	# Get SquarePath from the current scene (same as enemy spawner!)
+	var square_path = null
+	var main_scene = get_tree().current_scene
+	if main_scene:
+		if main_scene.has_node("ArenaContainer/Viewport/GameplayArena/SquarePath"):
+			square_path = main_scene.get_node("ArenaContainer/Viewport/GameplayArena/SquarePath")
 	
-	# Add to scene tree
-	get_tree().current_scene.add_child(boss)
+	if square_path:
+		# Use PathFollow2D just like enemies!
+		var path_follower = PathFollow2D.new()
+		path_follower.rotates = false
+		path_follower.loop = true
+		path_follower.progress = 0.0
+		square_path.add_child(path_follower)
+		path_follower.add_child(boss)
+		
+		# Tell boss it's on a path!
+		if boss.has_method("initialize_path_movement"):
+			boss.initialize_path_movement(path_follower)
+	else:
+		# Fallback: spawn at top of screen
+		var viewport = get_viewport()
+		if viewport:
+			var viewport_size = viewport.get_visible_rect().size
+			boss.global_position = Vector2(viewport_size.x / 2.0, -100)
+		get_tree().current_scene.add_child(boss)
 	
 	# Connect to destroyed signal for stage completion
 	boss.destroyed.connect(_on_boss_defeated)
@@ -455,6 +473,11 @@ func _handle_defeat(reason: String) -> void:
 	_set_battle_state(BattleState.DEFEATED)
 	_stage_timer.stop()
 	_spawn_timer.stop()
+	
+	# Set restart wave: current wave minus 3 (minimum 1)
+	var save_system = get_node_or_null("/root/SaveSystem")
+	if save_system and save_system.has_method("set_restart_wave"):
+		save_system.set_restart_wave(current_wave - 3)
 	
 	var progression = get_node_or_null("/root/ProgressionManager")
 	if progression:

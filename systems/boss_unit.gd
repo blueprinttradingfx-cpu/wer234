@@ -22,6 +22,10 @@ var current_phase: int = 1
 var max_phases: int = 3
 var phase_hp_thresholds: Array[float] = [0.66, 0.33]  # Phase changes at 66% and 33% HP
 
+# Path following (just like enemy_unit!)
+var follower_node: PathFollow2D = null
+var is_on_path_track: bool = false
+
 func _ready() -> void:
 	add_to_group("enemies")
 	add_to_group("boss")
@@ -34,8 +38,20 @@ func _ready() -> void:
 		var viewport_size = viewport.get_visible_rect().size
 		target_position = Vector2(viewport_size.x / 2.0, viewport_size.y / 2.0)
 
+func initialize_path_movement(wrapper: PathFollow2D) -> void:
+	follower_node = wrapper
+	# Snap to start of path
+	follower_node.progress = 0.0
+	is_on_path_track = true
+	position = Vector2.ZERO
+
 func _physics_process(delta: float) -> void:
-	_move_toward_target(delta)
+	if follower_node and is_on_path_track:
+		# Use PathFollow2D just like enemy_unit!
+		var speed = base_speed * speed_modifier
+		follower_node.progress += speed * delta
+	else:
+		_move_toward_target(delta)
 	_check_phase_transition()
 
 func set_speed_modifier(modifier: float) -> void:
@@ -99,5 +115,8 @@ func execute_destruction() -> void:
 	destroyed.emit()
 	print("[BossUnit] destroyed signal emitted!")
 	
-	# Trigger boss explosion visual systems here before freeing memory
-	queue_free()
+	# Clean up the PathFollow2D wrapper if it exists
+	if follower_node and is_instance_valid(follower_node):
+		follower_node.queue_free()
+	else:
+		queue_free()

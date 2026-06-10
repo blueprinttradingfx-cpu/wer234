@@ -222,6 +222,7 @@ func _load_initial_upgrades() -> void:
 				pierce_unlocked = true
 
 func _start_current_game_session() -> void:
+	print("[MainGameScene] _start_current_game_session CALLED!")
 	is_game_active = true
 	var pm = get_node_or_null("/root/ProgressionManager")
 	var save_sys = get_node_or_null("/root/SaveSystem")
@@ -234,9 +235,14 @@ func _start_current_game_session() -> void:
 	elif pm and "current_player_stage" in pm:
 		current_stage = pm.current_player_stage
 	
-	# Load saved wave
-	if save_sys and save_sys.has_method("get_current_wave"):
-		current_wave = save_sys.get_current_wave()
+	# Load restart wave (or saved wave if no restart wave)
+	var starting_wave = 1
+	if save_sys:
+		if save_sys.has_method("get_restart_wave"):
+			starting_wave = save_sys.get_restart_wave()
+		elif save_sys.has_method("get_current_wave"):
+			starting_wave = save_sys.get_current_wave()
+	current_wave = starting_wave
 		
 	# Update header labels with real values
 	if stage_label:
@@ -471,6 +477,8 @@ func trigger_stage_clear_victory() -> void:
 			save_sys.set_current_wave(1)
 		if save_sys.has_method("update_stage_progression"):
 			save_sys.update_stage_progression(new_stage)
+		if save_sys.has_method("set_restart_wave"):
+			save_sys.set_restart_wave(1)  # Reset restart wave for new stage
 	
 	# Clean up current game
 	is_game_active = false
